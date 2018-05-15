@@ -1,7 +1,9 @@
 package com.simona.healthcare.program;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -10,19 +12,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
+import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.exercise.ExercisesFragment;
+import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProgramsFragment extends Fragment {
 
     private static final String TAG = "HEALTH_";
 
     private ListView mListView;
+    private ProgramsAdapter mAdapter;
     private Context mContext;
     private int mProgramId;
 
@@ -71,21 +80,17 @@ public class ProgramsFragment extends Fragment {
             }
         });
 
-        ArrayList<Program> programs = new ArrayList<Program>();
-        programs.add(new Program(1, "Program1"));
-        programs.add(new Program(2, "Program2"));
-        programs.add(new Program(3, "Program3"));
-        programs.add(new Program(4, "Program4"));
-        programs.add(new Program(5, "Program5"));
+        List<Program> programs = DatabaseHelper.getInstance(mContext).getPrograms();
 
-        final ProgramsAdapter adapter = new ProgramsAdapter(mContext, programs);
-        mListView.setAdapter(adapter);
+
+        mAdapter = new ProgramsAdapter(mContext, programs);
+        mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (adapter != null) {
-                    Program selected = (Program) adapter.getItem(position);
+                if (mAdapter != null) {
+                    Program selected = (Program) mAdapter.getItem(position);
 
                     // Create an instance of Programs
                     Fragment programs = ExercisesFragment.newInstance(selected.getId());
@@ -98,8 +103,49 @@ public class ProgramsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Add Program
+     */
     public void add() {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        LinearLayout layout= new LinearLayout(getActivity().getApplicationContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
 
+        // Name
+        final EditText nameInput = new EditText(getActivity());
+        nameInput.setHint(R.string.name);
+
+        layout.addView(nameInput);
+        alert.setView(layout);
+        alert.setTitle(R.string.add_program);
+
+        alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                // Collect input
+                String name = nameInput.getText().toString().trim();
+
+                // Create Program object using the collected input
+                Program prog = new Program();
+                prog.setName(name);
+
+
+                // Add exercise to database
+                if (DatabaseHelper.getInstance(mContext).addProgram(prog)) {
+                    // Exercise was added - refresh adapter
+                    mAdapter.setData(DatabaseHelper.getInstance(mContext).getPrograms());
+                } else {
+                    Toast.makeText(mContext, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        alert.setNegativeButton(R.string.cancel,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                    }
+                });
+        alert.create().show();
     }
 
     public void delete() {

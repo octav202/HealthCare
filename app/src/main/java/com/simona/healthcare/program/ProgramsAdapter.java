@@ -64,6 +64,12 @@ public class ProgramsAdapter extends BaseAdapter {
         return v;
     }
 
+    public void setData(List<Program> programs) {
+        mPrograms.clear();
+        mPrograms.addAll(programs);
+        notifyDataSetChanged();
+    }
+
     public class FileHolder {
         TextView nameTextView;
         TextView exercisesTextView;

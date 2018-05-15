@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.simona.healthcare.exercise.Exercise;
+import com.simona.healthcare.program.Program;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,19 +28,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Table Names
     private static final String TABLE_EXERCISES = "EXERCISES";
-    private static final String TABLE_CATEGORIES = "CATEGORIES";
     private static final String TABLE_PROGRAMS = "PROGRAMS";
+    private static final String TABLE_CATEGORIES = "CATEGORIES";
     private static final String TABLE_EVENTS = "EVENTS";
     private static final String TABLE_RECIPES = "RECIPES";
 
-    // TABLE_EXERCISES columns
+    // TABLE_EXERCISES Columns
     private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "text";
+    private static final String KEY_NAME = "name";
     private static final String KEY_SETS = "sets";
     private static final String KEY_REPS = "reps";
     private static final String KEY_SET_DURATION = "set_duration";
     private static final String KEY_BREAK_DURATION = "break_duration";
     private static final String KEY_DESCRIPTION = "description";
+
+    // TABLE_PROGRAMS Columns
 
     public static DatabaseHelper getInstance(Context context){
         if (sInstance == null) {
@@ -52,11 +55,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "DB OnCreate()");
 
-        // Create Tables
+        // Create Exercises Table
         String CREATE_EXERCISES_TABLE = "CREATE TABLE " + TABLE_EXERCISES + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"
                 + KEY_NAME + " TEXT,"
@@ -66,6 +71,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_BREAK_DURATION + " INTEGER,"
                 + KEY_DESCRIPTION + " TEXT" + ")";
         db.execSQL(CREATE_EXERCISES_TABLE);
+
+        // Create Programs Table
+        String CREATE_PROGRAMS_TABLE = "CREATE TABLE " + TABLE_PROGRAMS + "("
+                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_NAME + " TEXT" + ")";
+        db.execSQL(CREATE_PROGRAMS_TABLE);
     }
 
     @Override
@@ -76,6 +87,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Create tables again
         onCreate(db);
     }
+
+
+    // ------------------------------------------------------
+    // ____________________ EXERCISES _______________________
+    // ______________________________________________________
 
     /**
      * Add Exercise
@@ -161,7 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 exercises.add(ex);
             } while (cursor.moveToNext());
         } else {
-            Log.d(TAG, " getFilters - No Filters Found");
+            Log.d(TAG, " getExercises - No exercises Found");
         }
         return exercises;
     }
@@ -173,6 +189,107 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private int getNextExerciseId() {
         String selectQuery = "SELECT MAX(id) FROM " + TABLE_EXERCISES;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        int nextId = 0;
+        if (cursor.moveToFirst()) {
+            String currentId = cursor.getString(0);
+            if (currentId != null) {
+                nextId = Integer.parseInt(currentId) + 1;
+            } else {
+                nextId = 0;
+            }
+        }
+
+        Log.d(TAG, " getNextExerciseId() " + nextId);
+        return nextId;
+    }
+
+    // ------------------------------------------------------
+    // ____________________ PROGRAMS ________________________
+    // ______________________________________________________
+
+    /**
+     * Add Program
+     * @param prog
+     */
+    public boolean addProgram(Program prog) {
+        Log.d(TAG, "DB addProgram() " + prog);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, getNextProgramId());
+        values.put(KEY_NAME, prog.getName());
+        long status = db.insertOrThrow(TABLE_PROGRAMS, null, values);
+
+        if (status < 0) {
+            Log.d(TAG, "addProgram() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return true;
+    }
+
+    /**
+     * Get Program for Id
+     * @param id
+     * @return
+     */
+    public Program getProgramForId(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PROGRAMS,
+                new String[]{KEY_ID, KEY_NAME},
+                KEY_ID + "=?",
+                new String[]{String.valueOf(id)},
+                null, null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        Program prog = new Program();
+        prog.setId(cursor.getInt(0));
+        prog.setName(cursor.getString(1));
+
+        return prog;
+    }
+
+    /**
+     * Get all programs.
+     * @return list of programs.
+     */
+    public List<Program> getPrograms() {
+        List<Program> programs = new ArrayList<Program>();
+        String selectQuery = "SELECT  * FROM " + TABLE_PROGRAMS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Program prog = new Program();
+                prog.setId(cursor.getInt(0));
+                prog.setName(cursor.getString(1));
+                programs.add(prog);
+            } while (cursor.moveToNext());
+        } else {
+            Log.d(TAG, " getPrograms - No programs Found");
+        }
+        return programs;
+    }
+
+    /**
+     * Get the next valid program id.
+     * Used when adding a new program.
+     * @return id
+     */
+    private int getNextProgramId() {
+        String selectQuery = "SELECT MAX(id) FROM " + TABLE_PROGRAMS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 

@@ -16,4 +16,6 @@
     <string name="set_duration">Set Duration</string>
     <string name="break_duration">Break Duration</string>
     <string name="description">Description</string>
+
+    <string name="add_program">Add Program.</string>
 </resources>
