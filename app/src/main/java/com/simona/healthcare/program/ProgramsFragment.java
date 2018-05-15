@@ -90,12 +90,20 @@ public class ProgramsFragment extends Fragment {
                     // Create an instance of Programs
                     Fragment programs = ExercisesFragment.newInstance(selected.getId());
                     MainActivity activity = (MainActivity) getActivity();
-                    //activity.loadFragment(programs);
+                    activity.loadFragment(programs);
                 }
             }
         });
 
         return view;
+    }
+
+    public void add() {
+
+    }
+
+    public void delete() {
+
     }
 
 }

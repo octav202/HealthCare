@@ -73,6 +73,12 @@ public class ExercisesAdapter extends BaseAdapter {
         Toast.makeText(mContext, "Selected " + selected, Toast.LENGTH_SHORT).show();
     }
 
+    public void setData(List<Exercise> exercises) {
+        mExercises.clear();
+        mExercises.addAll(exercises);
+        notifyDataSetChanged();
+    }
+
     public class FileHolder {
         TextView nameTextView;
         TextView setsTextView;

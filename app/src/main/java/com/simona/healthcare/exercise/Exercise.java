@@ -65,7 +65,7 @@ public class Exercise {
         return mSets;
     }
 
-    public void setmSets(int mSets) {
+    public void setSets(int mSets) {
         this.mSets = mSets;
     }
 

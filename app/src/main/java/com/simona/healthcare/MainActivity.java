@@ -8,14 +8,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.simona.healthcare.category.CategoriesFragment;
+import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.exercise.ExercisesFragment;
+import com.simona.healthcare.program.Program;
 import com.simona.healthcare.program.ProgramsFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Fragment mCurrentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,33 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (mCurrentFragment instanceof ExercisesFragment) {
+
+        }
+
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.add:
+                add();
+                return true;
+            case R.id.delete:
+                delete();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -76,6 +109,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void loadFragment(Fragment fragment) {
+        mCurrentFragment = fragment;
         getFragmentManager().beginTransaction().replace(R.id.mainContent, fragment).commit();
+    }
+
+    private void add() {
+        if (mCurrentFragment instanceof ExercisesFragment) {
+            ((ExercisesFragment) mCurrentFragment).add();
+        }
+
+        if (mCurrentFragment instanceof CategoriesFragment) {
+            ((CategoriesFragment) mCurrentFragment).add();
+        }
+
+        if (mCurrentFragment instanceof ProgramsFragment) {
+            ((ProgramsFragment) mCurrentFragment).add();
+        }
+
+    }
+
+    private void delete() {
+        if (mCurrentFragment instanceof ExercisesFragment) {
+            ((ExercisesFragment) mCurrentFragment).delete();
+        }
+
+        if (mCurrentFragment instanceof CategoriesFragment) {
+            ((CategoriesFragment) mCurrentFragment).delete();
+        }
+
+        if (mCurrentFragment instanceof ProgramsFragment) {
+            ((ProgramsFragment) mCurrentFragment).delete();
+        }
     }
 }
