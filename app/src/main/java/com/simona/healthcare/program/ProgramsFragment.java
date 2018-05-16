@@ -63,7 +63,8 @@ public class ProgramsFragment extends Fragment {
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                //adapter.filterAlarms(tab.getPosition() + 1);
+                // Position starts with 0, Days start with 1 -> Mon-1, Tue-2, Wed-3
+                mAdapter.filterByDay(tab.getPosition() + 1);
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -86,6 +87,18 @@ public class ProgramsFragment extends Fragment {
                 if (mAdapter != null) {
                     Toast.makeText(mContext, "Selected " + id, Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        mListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(mContext, "Selected " + id, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 

@@ -30,6 +30,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_EXERCISES = "EXERCISES";
     private static final String TABLE_PROGRAMS = "PROGRAMS";
     private static final String TABLE_PROGRAMS_EXERCISES = "PROGRAMS_EXERCISES";
+    private static final String TABLE_PROGRAMS_DAYS = "PROGRAMS_DAYS";
+
     private static final String TABLE_CATEGORIES = "CATEGORIES";
     private static final String TABLE_EVENTS = "EVENTS";
     private static final String TABLE_RECIPES = "RECIPES";
@@ -46,6 +48,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // TABLE_PROGRAMS_EXERCISES Columns - used for mapping program - exercise
     private static final String KEY_PROGRAM_ID = "program_id";
     private static final String KEY_EXERCISE_ID = "exercise_id";
+
+    // TABLE_PROGRAMS_DAYS Columns - used for mapping program - days
+    private static final String KEY_DAY_ID = "day_id";
 
     public static DatabaseHelper getInstance(Context context){
         if (sInstance == null) {
@@ -86,6 +91,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_PROGRAM_ID + " INTEGER ,"
                 + KEY_EXERCISE_ID + " INTEGER" + ")";
         db.execSQL(CREATE_PROGRAMS_EXERCISE_TABLE);
+
+        // Create PROGRAMS_DAYS Table.
+        String CREATE_PROGRAMS_DAYS_TABLE = "CREATE TABLE " + TABLE_PROGRAMS_DAYS + "("
+                + KEY_PROGRAM_ID + " INTEGER ,"
+                + KEY_DAY_ID + " INTEGER" + ")";
+        db.execSQL(CREATE_PROGRAMS_DAYS_TABLE);
     }
 
     @Override
@@ -223,7 +234,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Add Program
      * @param prog
      */
-    public boolean addProgram(Program prog, List<Exercise> listOfExercises) {
+    public boolean addProgram(Program prog) {
         Log.d(TAG, "DB addProgram() " + prog);
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -247,10 +258,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         // Add exercises for program
-        for (Exercise e : listOfExercises) {
+        for (Exercise e : prog.getExercises()) {
             addExerciseForProgram(prog, e);
         }
 
+        // Add days for program
+        for (Integer day : prog.getDays()) {
+            addDayForProgram(prog,day);
+        }
         return true;
     }
 
@@ -385,6 +400,98 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         } else {
             Log.d(TAG, " getExercisesForProgramId - Not Found for program " + id);
+        }
+
+        return list;
+    }
+
+    // ----------------------------------------------------------------
+    // ____________________ PROGRAMS_DAYS ____________________________
+    // ________________________________________________________________
+
+    /**
+     * Added Day for Program.
+     *
+     * @param prog - program
+     * @param day - exercise to be added for program
+     * @return operation status.
+     */
+    public boolean addDayForProgram(Program prog, Integer day) {
+        Log.d(TAG, "DB addDayForProgram() " + prog + " " + day);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        // Add exercise for program
+        ContentValues values = new ContentValues();
+        values.put(KEY_PROGRAM_ID, prog.getId());
+        values.put(KEY_DAY_ID, day);
+        long status = db.insertOrThrow(TABLE_PROGRAMS_DAYS, null, values);
+
+        if (status < 0) {
+            Log.d(TAG, "addDayForProgram() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return true;
+    }
+
+    /**
+     * Get Days for Program Id
+     * @param id
+     * @return
+     */
+    public List<Integer> getDaysForProgramId(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PROGRAMS_DAYS,
+                new String[]{KEY_PROGRAM_ID, KEY_DAY_ID},
+                KEY_PROGRAM_ID + "=?",
+                new String[]{String.valueOf(id)},
+                null, null, null, null);
+
+
+        List<Integer> list = new ArrayList<Integer>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                Integer day = cursor.getInt(1);
+                list.add(day);
+            } while (cursor.moveToNext());
+        } else {
+            Log.d(TAG, " getDaysForProgramId - Not Found for program " + id);
+        }
+
+        return list;
+    }
+
+    /**
+     * Get Programs For Dau
+     * @param id
+     * @return
+     */
+    public List<Program> getProgramsForDay(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PROGRAMS_DAYS,
+                new String[]{KEY_PROGRAM_ID, KEY_DAY_ID},
+                KEY_DAY_ID + "=?",
+                new String[]{String.valueOf(id)},
+                null, null, null, null);
+
+
+        List<Program> list = new ArrayList<Program>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                Program program = getProgramForId(cursor.getInt(0));
+                list.add(program);
+            } while (cursor.moveToNext());
+        } else {
+            Log.d(TAG, " getProgramsForDays() - Not Found for program " + id);
         }
 
         return list;

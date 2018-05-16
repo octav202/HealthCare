@@ -1,6 +1,7 @@
 package com.simona.healthcare.program;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.utils.DatabaseHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProgramsAdapter extends BaseAdapter {
@@ -21,18 +23,21 @@ public class ProgramsAdapter extends BaseAdapter {
 
     private List<Program> mPrograms;
     private Context mContext;
+    private List<Program> mFilteredPrograms;
 
     public ProgramsAdapter(Context c, List<Program> programs) {
         mContext = c;
         mPrograms = programs;
+        mFilteredPrograms = new ArrayList<>();
+        mFilteredPrograms.addAll(programs);
     }
 
     public int getCount() {
-        return mPrograms.size();
+        return mFilteredPrograms.size();
     }
 
     public Object getItem(int position) {
-        return mPrograms.get(position);
+        return mFilteredPrograms.get(position);
     }
 
     public long getItemId(int position) {
@@ -53,7 +58,7 @@ public class ProgramsAdapter extends BaseAdapter {
             holder = (FileHolder) v.getTag();
         }
 
-        final Program program = mPrograms.get(position);
+        final Program program = mFilteredPrograms.get(position);
         holder.nameTextView.setText(program.getName());
 
         List<Exercise> exercises = DatabaseHelper.getInstance(mContext).getExercisesForProgramId(program.getId());
@@ -84,6 +89,19 @@ public class ProgramsAdapter extends BaseAdapter {
     public void setData(List<Program> programs) {
         mPrograms.clear();
         mPrograms.addAll(programs);
+        mFilteredPrograms.addAll(programs);
+        notifyDataSetChanged();
+    }
+
+    public void filterByDay(Integer day) {
+        Log.d(TAG, "filterByDay() : " + day);
+        mFilteredPrograms.clear();
+
+        if (day <8) {
+            mFilteredPrograms.addAll(DatabaseHelper.getInstance(mContext).getProgramsForDay(day));
+        } else {
+            mFilteredPrograms.addAll(mPrograms);
+        }
         notifyDataSetChanged();
     }
 
