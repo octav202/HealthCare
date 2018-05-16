@@ -322,7 +322,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
 
-        prog.setId(getNextProgramId());
+        // If Id is 0, get next valid id from database
+        if (prog.getId() == 0) {
+            prog.setId(getNextProgramId());
+        }
 
         // Add program to PROGRAMS database
         ContentValues values = new ContentValues();

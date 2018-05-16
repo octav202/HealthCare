@@ -98,8 +98,23 @@ public class EditProgramDialog extends Dialog {
                     return;
                 }
 
-                // Add Program
+                // Edit Program
+                if (programToEdit != null) {
+                    // This is edit mode - delete program and add it again with new values
+                    if (DatabaseHelper.getInstance(mContext).deleteProgram(programToEdit)) {
+                        // Refresh List
+                        mCallback.onProgramEditDone();
+                    } else {
+                        Toast.makeText(mContext, "Update Program Failed!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
                 Program prog = new Program();
+                if (programToEdit !=null) {
+                    // Edit Program - keep the same id
+                    prog.setId(programToEdit.getId());
+                }
                 prog.setName(name);
                 prog.setExercises(mAdapter.getSelectedItems());
                 prog.setDays(days);
@@ -120,29 +135,30 @@ public class EditProgramDialog extends Dialog {
             }
         });
 
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Delete Program from database
+                if (DatabaseHelper.getInstance(mContext).deleteProgram(programToEdit)) {
+                    // Refresh List
+                    mCallback.onProgramEditDone();
+                } else {
+                    Toast.makeText(mContext, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
+                }
+
+                dismiss();
+            }
+        });
+
         // Edit Mode - populate fields
         if (programToEdit != null) {
-
-            mDeleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Delete Program from database
-                    if (DatabaseHelper.getInstance(mContext).deleteProgram(programToEdit)) {
-                        // Refresh List
-                        mCallback.onProgramEditDone();
-                    } else {
-                        Toast.makeText(mContext, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
-                    }
-
-                    dismiss();
-                }
-            });
 
             mNameText.setText(programToEdit.getName());
 
             // Get Exercises for current program
             List<Exercise> exercises = DatabaseHelper.getInstance(mContext).
                     getExercisesForProgramId(programToEdit.getId());
+            mAdapter.setSelectedItems(exercises);
 
             // Get Days for current program
             List<Integer> days = DatabaseHelper.getInstance(mContext).

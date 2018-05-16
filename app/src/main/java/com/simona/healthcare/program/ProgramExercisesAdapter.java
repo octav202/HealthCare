@@ -69,23 +69,31 @@ public class ProgramExercisesAdapter extends BaseAdapter {
         holder.descriptionTextView.setText(exercise.getDescription());
         //holder.imageView.setImageDrawable(exercise.getImagePath());
 
+        // For Edit Mode - Set selected exercises checked
+        for (Exercise e : mSelectedExercises) {
+            if (exercise.getId() == e.getId()) {
+                holder.checkBox.setChecked(true);
+                break;
+            }
+        }
+
+        // Add exercise to Program
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mSelectedExercises.add(exercise);
                 } else {
-                    mSelectedExercises.remove(exercise);
+                    for (Exercise e : mSelectedExercises) {
+                        if (e.getId() == exercise.getId()) {
+                            mSelectedExercises.remove(e);
+                        }
+                    }
                 }
             }
         });
 
         return v;
-    }
-
-    public void onItemSelected(int position) {
-        Log.d(TAG, "onItemSelected() " + position);
-        Toast.makeText(mContext, "Selected " + position, Toast.LENGTH_SHORT).show();
     }
 
     public List<Exercise> getSelectedItems() {
@@ -95,6 +103,16 @@ public class ProgramExercisesAdapter extends BaseAdapter {
     public void setData(List<Exercise> exercises) {
         mExercises.clear();
         mExercises.addAll(exercises);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Set list of selected exercises
+     * @param list
+     */
+    public void setSelectedItems(List<Exercise> list) {
+        mSelectedExercises.clear();
+        mSelectedExercises.addAll(list);
         notifyDataSetChanged();
     }
 
