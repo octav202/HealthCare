@@ -31,7 +31,7 @@ public class ExercisesAdapter extends BaseAdapter {
     }
 
     public Object getItem(int position) {
-        return null;
+        return mExercises.get(position);
     }
 
     public long getItemId(int position) {
@@ -63,14 +63,6 @@ public class ExercisesAdapter extends BaseAdapter {
 
 
         return v;
-    }
-
-    public void onItemSelected(int position) {
-        Log.d(TAG, "onItemSelected() " + position);
-
-        Exercise selected = mExercises.get(position);
-
-        Toast.makeText(mContext, "Selected " + selected, Toast.LENGTH_SHORT).show();
     }
 
     public void setData(List<Exercise> exercises) {

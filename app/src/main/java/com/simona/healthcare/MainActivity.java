@@ -69,9 +69,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.add:
                 add();
                 return true;
-            case R.id.delete:
-                delete();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

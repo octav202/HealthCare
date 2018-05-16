@@ -145,6 +145,76 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Update Exercise
+     * @param ex
+     */
+    public boolean updateExercise(Exercise ex) {
+        Log.d(TAG, "DB updateExercise() " + ex);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, ex.getId());
+        values.put(KEY_NAME, ex.getName());
+        values.put(KEY_SETS, ex.getSets());
+        values.put(KEY_REPS, ex.getRepsPerSet());
+        values.put(KEY_SET_DURATION, ex.getSetDuration());
+        values.put(KEY_BREAK_DURATION, ex.getBreak());
+        values.put(KEY_DESCRIPTION, ex.getDescription());
+        long status = db.update(TABLE_EXERCISES, values,
+                KEY_ID + " = ?",
+                new String[] { String.valueOf(ex.getId()) });
+
+        if (status < 0) {
+            Log.d(TAG, "addExercise() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return true;
+    }
+
+    /**
+     * Delete Exercise
+     * @param ex
+     */
+    public boolean deleteExercise(Exercise ex) {
+        Log.d(TAG, "DB deleteExercise() " + ex);
+
+        if (!canDeleteExercise(ex)) {
+            Log.d(TAG, "DB Cannot Delete Exercise - Used in programs.");
+            return false;
+        }
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, ex.getId());
+        values.put(KEY_NAME, ex.getName());
+        values.put(KEY_SETS, ex.getSets());
+        values.put(KEY_REPS, ex.getRepsPerSet());
+        values.put(KEY_SET_DURATION, ex.getSetDuration());
+        values.put(KEY_BREAK_DURATION, ex.getBreak());
+        values.put(KEY_DESCRIPTION, ex.getDescription());
+        long status = db.delete(TABLE_EXERCISES, KEY_ID + " = ?",
+                new String[] { String.valueOf(ex.getId()) });
+
+        if (status < 0) {
+            Log.d(TAG, "addExercise() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return true;
+    }
+
+    /**
      * Get Exercises for Id
      * @param id
      * @return
@@ -200,6 +270,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d(TAG, " getExercises - No exercises Found");
         }
         return exercises;
+    }
+
+    /**
+     * Check if exercise is used by any program before deleting it.
+     * @param ex
+     * @return
+     */
+    public boolean canDeleteExercise(Exercise ex) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PROGRAMS_EXERCISES,
+                new String[]{KEY_PROGRAM_ID, KEY_EXERCISE_ID},
+                KEY_EXERCISE_ID + "=?",
+                new String[]{String.valueOf(ex.getId())},
+                null, null, null, null);
+
+        if (cursor.getCount() >0) {
+            // Programs found using this exercise. DO NOT delete it.
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -61,7 +61,8 @@ public class ExercisesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mAdapter != null) {
-                    mAdapter.onItemSelected(position);
+                    Exercise ex = (Exercise) mAdapter.getItem(position);
+                    edit(ex);
                 }
             }
         });
@@ -83,18 +84,22 @@ public class ExercisesFragment extends Fragment {
         // Sets
         final EditText setsInput = new EditText(getActivity());
         setsInput.setHint(R.string.sets);
+        setsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         // Reps
         final EditText repsInput = new EditText(getActivity());
         repsInput.setHint(R.string.reps);
+        repsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         // Set Duration
         final EditText setDurationInput = new EditText(getActivity());
         setDurationInput.setHint(R.string.set_duration);
+        setDurationInput.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         // Break Duration
         final EditText breakInput = new EditText(getActivity());
         breakInput.setHint(R.string.break_duration);
+        breakInput.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         // Description
         final EditText descriptionInput = new EditText(getActivity());
@@ -110,6 +115,7 @@ public class ExercisesFragment extends Fragment {
 
         alert.setTitle(R.string.add_exercise);
 
+        // Ok Button
         alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -139,12 +145,108 @@ public class ExercisesFragment extends Fragment {
                 }
             }
         });
+
+        // Cancel Button
         alert.setNegativeButton(R.string.cancel,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.cancel();
                     }
                 });
+        alert.create().show();
+    }
+
+    private void edit(final Exercise exercise) {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        LinearLayout layout= new LinearLayout(getActivity().getApplicationContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        // Name
+        final EditText nameInput = new EditText(getActivity());
+        nameInput.setText(exercise.getName());
+
+        // Sets
+        final EditText setsInput = new EditText(getActivity());
+        setsInput.setText(String.valueOf(exercise.getSets()));
+
+        // Reps
+        final EditText repsInput = new EditText(getActivity());
+        repsInput.setText(String.valueOf(exercise.getRepsPerSet()));
+
+        // Set Duration
+        final EditText setDurationInput = new EditText(getActivity());
+        setDurationInput.setText(String.valueOf(exercise.getSetDuration()));
+
+        // Break Duration
+        final EditText breakInput = new EditText(getActivity());
+        breakInput.setText(String.valueOf(exercise.getBreak()));
+
+        // Description
+        final EditText descriptionInput = new EditText(getActivity());
+        descriptionInput.setText(exercise.getDescription());
+
+        layout.addView(nameInput);
+        layout.addView(setsInput);
+        layout.addView(repsInput);
+        layout.addView(setDurationInput);
+        layout.addView(breakInput);
+        layout.addView(descriptionInput);
+        alert.setView(layout);
+
+        alert.setTitle(R.string.add_exercise);
+
+        // Ok Button
+        alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                // Collect input
+                String name = nameInput.getText().toString().trim();
+                String sets = setsInput.getText().toString().trim();
+                String reps = repsInput.getText().toString().trim();
+                String setDuration = setDurationInput.getText().toString().trim();
+                String breakDuration = breakInput.getText().toString().trim();
+                String description = descriptionInput.getText().toString().trim();
+
+                // Create Exercise object using the collected input
+                exercise.setName(name);
+                exercise.setSets(Integer.parseInt(sets));
+                exercise.setRepsPerSet(Integer.parseInt(reps));
+                exercise.setSetDuration(Integer.parseInt(setDuration));
+                exercise.setBreak(Integer.parseInt(breakDuration));
+                exercise.setDescription(description);
+
+                // Add exercise to database
+                if (DatabaseHelper.getInstance(mContext).updateExercise(exercise)) {
+                    // Exercise was added - refresh adapter
+                    mAdapter.setData(DatabaseHelper.getInstance(mContext).getExercises());
+                } else {
+                    Toast.makeText(mContext, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Delete Button
+        alert.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Add exercise to database
+                if (DatabaseHelper.getInstance(mContext).deleteExercise(exercise)) {
+                    // Exercise was deleted - refresh adapter
+                    mAdapter.setData(DatabaseHelper.getInstance(mContext).getExercises());
+                } else {
+                    Toast.makeText(mContext, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Cancel Button
+        alert.setNeutralButton(R.string.cancel,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                    }
+                });
+
         alert.create().show();
     }
 
