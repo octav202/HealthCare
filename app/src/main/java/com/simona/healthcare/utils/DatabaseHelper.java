@@ -29,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Table Names
     private static final String TABLE_EXERCISES = "EXERCISES";
     private static final String TABLE_PROGRAMS = "PROGRAMS";
+    private static final String TABLE_PROGRAMS_EXERCISES = "PROGRAMS_EXERCISES";
     private static final String TABLE_CATEGORIES = "CATEGORIES";
     private static final String TABLE_EVENTS = "EVENTS";
     private static final String TABLE_RECIPES = "RECIPES";
@@ -42,7 +43,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_BREAK_DURATION = "break_duration";
     private static final String KEY_DESCRIPTION = "description";
 
-    // TABLE_PROGRAMS Columns
+    // TABLE_PROGRAMS_EXERCISES Columns - used for mapping program - exercise
+    private static final String KEY_PROGRAM_ID = "program_id";
+    private static final String KEY_EXERCISE_ID = "exercise_id";
 
     public static DatabaseHelper getInstance(Context context){
         if (sInstance == null) {
@@ -77,6 +80,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_ID + " INTEGER PRIMARY KEY,"
                 + KEY_NAME + " TEXT" + ")";
         db.execSQL(CREATE_PROGRAMS_TABLE);
+
+        // Create PROGRAMS_EXERCISE Table.
+        String CREATE_PROGRAMS_EXERCISE_TABLE = "CREATE TABLE " + TABLE_PROGRAMS_EXERCISES + "("
+                + KEY_PROGRAM_ID + " INTEGER ,"
+                + KEY_EXERCISE_ID + " INTEGER" + ")";
+        db.execSQL(CREATE_PROGRAMS_EXERCISE_TABLE);
     }
 
     @Override
@@ -214,14 +223,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Add Program
      * @param prog
      */
-    public boolean addProgram(Program prog) {
+    public boolean addProgram(Program prog, List<Exercise> listOfExercises) {
         Log.d(TAG, "DB addProgram() " + prog);
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
 
+        prog.setId(getNextProgramId());
+
+        // Add program to PROGRAMS database
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, getNextProgramId());
+        values.put(KEY_ID, prog.getId());
         values.put(KEY_NAME, prog.getName());
         long status = db.insertOrThrow(TABLE_PROGRAMS, null, values);
 
@@ -229,9 +241,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d(TAG, "addProgram() FAILED");
             return false;
         }
+
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();
+
+        // Add exercises for program
+        for (Exercise e : listOfExercises) {
+            addExerciseForProgram(prog, e);
+        }
 
         return true;
     }
@@ -265,6 +283,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return list of programs.
      */
     public List<Program> getPrograms() {
+        Log.d(TAG, "getPrograms()");
         List<Program> programs = new ArrayList<Program>();
         String selectQuery = "SELECT  * FROM " + TABLE_PROGRAMS;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -276,6 +295,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 prog.setId(cursor.getInt(0));
                 prog.setName(cursor.getString(1));
                 programs.add(prog);
+                Log.d(TAG, prog.toString());
             } while (cursor.moveToNext());
         } else {
             Log.d(TAG, " getPrograms - No programs Found");
@@ -303,8 +323,71 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
 
-        Log.d(TAG, " getNextExerciseId() " + nextId);
+        Log.d(TAG, " getNextProgramId() " + nextId);
         return nextId;
+    }
+
+    // ----------------------------------------------------------------
+    // ____________________ PROGRAMS_EXERCISES ________________________
+    // ________________________________________________________________
+
+    /**
+     * Added Exercise for Program.
+     *
+     * @param prog - program
+     * @param ex - exercise to be added for program
+     * @return operation status.
+     */
+    public boolean addExerciseForProgram(Program prog, Exercise ex) {
+        Log.d(TAG, "DB addExerciseForProgram() " + prog + " " + ex);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        // Add exercise for program
+        ContentValues values = new ContentValues();
+        values.put(KEY_PROGRAM_ID, prog.getId());
+        values.put(KEY_EXERCISE_ID, ex.getId());
+        long status = db.insertOrThrow(TABLE_PROGRAMS_EXERCISES, null, values);
+
+        if (status < 0) {
+            Log.d(TAG, "addExerciseForProgram() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return true;
+    }
+
+    /**
+     * Get Exercises for Program Id
+     * @param id
+     * @return
+     */
+    public List<Exercise> getExercisesForProgramId(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_PROGRAMS_EXERCISES,
+                new String[]{KEY_PROGRAM_ID, KEY_EXERCISE_ID},
+                KEY_PROGRAM_ID + "=?",
+                new String[]{String.valueOf(id)},
+                null, null, null, null);
+
+
+        List<Exercise> list = new ArrayList<Exercise>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                Exercise ex = getExerciseForId(cursor.getInt(1));
+                list.add(ex);
+            } while (cursor.moveToNext());
+        } else {
+            Log.d(TAG, " getExercisesForProgramId - Not Found for program " + id);
+        }
+
+        return list;
     }
 
 }

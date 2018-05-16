@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.simona.healthcare.R;
+import com.simona.healthcare.exercise.Exercise;
+import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.List;
 
@@ -53,7 +55,22 @@ public class ProgramsAdapter extends BaseAdapter {
 
         final Program program = mPrograms.get(position);
         holder.nameTextView.setText(program.getName());
-        holder.exercisesTextView.setText("Exercises : ex1, ex2, ex3. ex4..");
+
+        List<Exercise> exercises = DatabaseHelper.getInstance(mContext).getExercisesForProgramId(program.getId());
+        StringBuilder builder = new StringBuilder();
+        // Get Exercises for Program
+        for (int i = 0; i < exercises.size(); i++) {
+            Exercise ex = exercises.get(i);
+            builder.append(ex.getName());
+
+            if (i < exercises.size() - 1) {
+                builder.append(", ");
+            }
+        }
+
+        holder.exercisesTextView.setText(builder.toString());
+
+        // Start Program
         holder.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

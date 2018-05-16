@@ -1,9 +1,7 @@
 package com.simona.healthcare.program;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -12,18 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
-import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.utils.DatabaseHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProgramsFragment extends Fragment {
@@ -90,12 +84,7 @@ public class ProgramsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mAdapter != null) {
-                    Program selected = (Program) mAdapter.getItem(position);
-
-                    // Create an instance of Programs
-                    Fragment programs = ExercisesFragment.newInstance(selected.getId());
-                    MainActivity activity = (MainActivity) getActivity();
-                    activity.loadFragment(programs);
+                    Toast.makeText(mContext, "Selected " + id, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -107,45 +96,14 @@ public class ProgramsFragment extends Fragment {
      * Add Program
      */
     public void add() {
-        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        LinearLayout layout= new LinearLayout(getActivity().getApplicationContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        // Name
-        final EditText nameInput = new EditText(getActivity());
-        nameInput.setHint(R.string.name);
-
-        layout.addView(nameInput);
-        alert.setView(layout);
-        alert.setTitle(R.string.add_program);
-
-        alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                // Collect input
-                String name = nameInput.getText().toString().trim();
-
-                // Create Program object using the collected input
-                Program prog = new Program();
-                prog.setName(name);
-
-
-                // Add exercise to database
-                if (DatabaseHelper.getInstance(mContext).addProgram(prog)) {
-                    // Exercise was added - refresh adapter
-                    mAdapter.setData(DatabaseHelper.getInstance(mContext).getPrograms());
-                } else {
-                    Toast.makeText(mContext, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
-                }
+        new AddProgramDialog(getActivity(), new AddProgramDialog.AddProgramDialogCallback() {
+            @Override
+            public void onProgramAdded() {
+                // Program added, update list
+                List<Program> programs = DatabaseHelper.getInstance(mContext).getPrograms();
+                mAdapter.setData(programs);
             }
-        });
-        alert.setNegativeButton(R.string.cancel,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-        alert.create().show();
+        }).show();
     }
 
     public void delete() {
