@@ -229,7 +229,7 @@ public class ExercisesFragment extends Fragment {
         alert.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Add exercise to database
+                // Delete exercise from database
                 if (DatabaseHelper.getInstance(mContext).deleteExercise(exercise)) {
                     // Exercise was deleted - refresh adapter
                     mAdapter.setData(DatabaseHelper.getInstance(mContext).getExercises());

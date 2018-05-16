@@ -117,22 +117,29 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttonsLayout"
         android:orientation="horizontal"
-        android:weightSum="2"
+        android:weightSum="3"
         android:layout_alignParentBottom="true">
+
+        <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/deleteButton"
+            android:text="@string/delete"
+            android:layout_margin="5dp"/>
 
         <Button android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/cancelButton"
             android:text="@string/cancel"
-            android:layout_margin="10dp"/>
+            android:layout_margin="5dp"/>
 
         <Button android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/okButton"
             android:text="@string/ok"
-            android:layout_margin="10dp"/>
+            android:layout_margin="5dp"/>
     </LinearLayout>
 
 </RelativeLayout>

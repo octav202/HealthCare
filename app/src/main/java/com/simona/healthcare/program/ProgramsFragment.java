@@ -13,9 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
-import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.List;
@@ -77,28 +75,14 @@ public class ProgramsFragment extends Fragment {
 
         List<Program> programs = DatabaseHelper.getInstance(mContext).getPrograms();
 
-
         mAdapter = new ProgramsAdapter(mContext, programs);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mAdapter != null) {
-                    Toast.makeText(mContext, "Selected " + id, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        mListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(mContext, "Selected " + id, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+                Program prog  = (Program) mAdapter.getItem(position);
+                edit(prog);
             }
         });
 
@@ -109,18 +93,28 @@ public class ProgramsFragment extends Fragment {
      * Add Program
      */
     public void add() {
-        new AddProgramDialog(getActivity(), new AddProgramDialog.AddProgramDialogCallback() {
+        new EditProgramDialog(getActivity(), new EditProgramDialog.AddProgramDialogCallback() {
             @Override
-            public void onProgramAdded() {
+            public void onProgramEditDone() {
                 // Program added, update list
                 List<Program> programs = DatabaseHelper.getInstance(mContext).getPrograms();
                 mAdapter.setData(programs);
             }
-        }).show();
+        }, null).show();
     }
 
-    public void delete() {
-
+    /**
+     * Edit Program
+     */
+    public void edit(Program program) {
+        new EditProgramDialog(getActivity(), new EditProgramDialog.AddProgramDialogCallback() {
+            @Override
+            public void onProgramEditDone() {
+                // Program added, update list
+                List<Program> programs = DatabaseHelper.getInstance(mContext).getPrograms();
+                mAdapter.setData(programs);
+            }
+        }, program).show();
     }
 
 }

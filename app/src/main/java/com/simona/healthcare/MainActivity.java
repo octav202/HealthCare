@@ -122,20 +122,5 @@ public class MainActivity extends AppCompatActivity
         if (mCurrentFragment instanceof ProgramsFragment) {
             ((ProgramsFragment) mCurrentFragment).add();
         }
-
-    }
-
-    private void delete() {
-        if (mCurrentFragment instanceof ExercisesFragment) {
-            ((ExercisesFragment) mCurrentFragment).delete();
-        }
-
-        if (mCurrentFragment instanceof CategoriesFragment) {
-            ((CategoriesFragment) mCurrentFragment).delete();
-        }
-
-        if (mCurrentFragment instanceof ProgramsFragment) {
-            ((ProgramsFragment) mCurrentFragment).delete();
-        }
     }
 }

@@ -16,10 +16,9 @@ import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.simona.healthcare.utils.Constants.TAG;
 
-public class AddProgramDialog extends Dialog {
+public class EditProgramDialog extends Dialog {
 
     private Context mContext;
     private AddProgramDialogCallback mCallback;
@@ -28,6 +27,7 @@ public class AddProgramDialog extends Dialog {
     private ProgramExercisesAdapter mAdapter;
     private Button mCancelBtn;
     private Button mOkBtn;
+    private Button mDeleteButton;
 
     // Days
     private Button mMonBtn;
@@ -39,9 +39,9 @@ public class AddProgramDialog extends Dialog {
     private Button mSunButton;
     private List<Button> mDays;
 
-    public AddProgramDialog(final Context context, AddProgramDialogCallback callback) {
+    public EditProgramDialog(final Context context, AddProgramDialogCallback callback, final Program programToEdit) {
         super(context, R.style.Theme_AppCompat_Light_Dialog);
-        this.setContentView(R.layout.add_program_dialog);
+        this.setContentView(R.layout.edit_program_dialog);
 
         mContext = context;
         mCallback = callback;
@@ -49,6 +49,9 @@ public class AddProgramDialog extends Dialog {
         mListView = findViewById(R.id.addExerciseList);
         mCancelBtn = findViewById(R.id.cancelButton);
         mOkBtn = findViewById(R.id.okButton);
+        mDeleteButton = findViewById(R.id.deleteButton);
+
+        // Days Buttons
         mMonBtn = findViewById(R.id.monday);
         mTueBtn = findViewById(R.id.tuesday);
         mWedButton = findViewById(R.id.wednesday);
@@ -95,12 +98,13 @@ public class AddProgramDialog extends Dialog {
                     return;
                 }
 
+                // Add Program
                 Program prog = new Program();
                 prog.setName(name);
                 prog.setExercises(mAdapter.getSelectedItems());
                 prog.setDays(days);
                 if (DatabaseHelper.getInstance(context).addProgram(prog)) {
-                    mCallback.onProgramAdded();
+                    mCallback.onProgramEditDone();
                 } else {
                     Toast.makeText(context, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
                 }
@@ -115,6 +119,52 @@ public class AddProgramDialog extends Dialog {
                 dismiss();
             }
         });
+
+        // Edit Mode - populate fields
+        if (programToEdit != null) {
+
+            mDeleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Delete Program from database
+                    if (DatabaseHelper.getInstance(mContext).deleteProgram(programToEdit)) {
+                        // Refresh List
+                        mCallback.onProgramEditDone();
+                    } else {
+                        Toast.makeText(mContext, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    dismiss();
+                }
+            });
+
+            mNameText.setText(programToEdit.getName());
+
+            // Get Exercises for current program
+            List<Exercise> exercises = DatabaseHelper.getInstance(mContext).
+                    getExercisesForProgramId(programToEdit.getId());
+
+            // Get Days for current program
+            List<Integer> days = DatabaseHelper.getInstance(mContext).
+                    getDaysForProgramId(programToEdit.getId());
+            for (Integer day:days) {
+                Log.d(TAG, "Day : " + day);
+
+                for (Button b : mDays) {
+                    if (Integer.parseInt(b.getTag().toString()) == day) {
+                        b.setSelected(true);
+
+                        if (b.isSelected()) {
+                            b.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
+                        } else {
+                            b.setBackgroundColor(Color.GRAY);
+                        }
+                    }
+                }
+            }
+        } else {
+            mDeleteButton.setVisibility(View.GONE);
+        }
     }
 
     private void initButtonListeners() {
@@ -148,6 +198,6 @@ public class AddProgramDialog extends Dialog {
     }
 
     public interface AddProgramDialogCallback {
-        void onProgramAdded();
+        void onProgramEditDone();
     }
 }

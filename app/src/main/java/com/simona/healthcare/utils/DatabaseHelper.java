@@ -191,15 +191,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID, ex.getId());
-        values.put(KEY_NAME, ex.getName());
-        values.put(KEY_SETS, ex.getSets());
-        values.put(KEY_REPS, ex.getRepsPerSet());
-        values.put(KEY_SET_DURATION, ex.getSetDuration());
-        values.put(KEY_BREAK_DURATION, ex.getBreak());
-        values.put(KEY_DESCRIPTION, ex.getDescription());
         long status = db.delete(TABLE_EXERCISES, KEY_ID + " = ?",
                 new String[] { String.valueOf(ex.getId()) });
 
@@ -433,6 +424,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return nextId;
     }
 
+    /**
+     * Delete Program
+     * @param program
+     */
+    public boolean deleteProgram(Program program) {
+        Log.d(TAG, "DB deleteProgram() " + program);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        long status = db.delete(TABLE_PROGRAMS, KEY_ID + " = ?",
+                new String[] { String.valueOf(program.getId()) });
+
+        if (status < 0) {
+            Log.d(TAG, "addExercise() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        // Delete entries from PROGRAM_EXERCISES
+        deleteExercisesForProgram(program);
+
+        // Delete entries from PROGRAM_DAYS
+        deleteDaysForProgram(program);
+        return true;
+    }
+
     // ----------------------------------------------------------------
     // ____________________ PROGRAMS_EXERCISES ________________________
     // ________________________________________________________________
@@ -494,6 +513,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return list;
+    }
+
+    /**
+     * Delete Exercises for Program
+     * @param program
+     */
+    public boolean deleteExercisesForProgram(Program program) {
+        Log.d(TAG, "DB deleteExercisesForProgram() " + program);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        long status = db.delete(TABLE_PROGRAMS_EXERCISES, KEY_PROGRAM_ID + " = ?",
+                new String[] { String.valueOf(program.getId()) });
+
+        if (status < 0) {
+            Log.d(TAG, "addExercise() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+        return true;
     }
 
     // ----------------------------------------------------------------
@@ -586,6 +628,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return list;
+    }
+
+    /**
+     * Delete Days for Program
+     * @param program
+     */
+    public boolean deleteDaysForProgram(Program program) {
+        Log.d(TAG, "DB deleteDaysForProgram() " + program);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        long status = db.delete(TABLE_PROGRAMS_DAYS, KEY_PROGRAM_ID + " = ?",
+                new String[] { String.valueOf(program.getId()) });
+
+        if (status < 0) {
+            Log.d(TAG, "addExercise() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+        return true;
     }
 
 }

@@ -36,6 +36,7 @@
         android:textColor="@android:color/black"
         android:textSize="15dp"
         android:textStyle="bold"
-        android:text="Play"/>
+        android:text="Play"
+        android:focusable="false"/>
 
 </RelativeLayout>

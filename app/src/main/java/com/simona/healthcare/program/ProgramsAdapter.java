@@ -89,6 +89,7 @@ public class ProgramsAdapter extends BaseAdapter {
     public void setData(List<Program> programs) {
         mPrograms.clear();
         mPrograms.addAll(programs);
+        mFilteredPrograms.clear();
         mFilteredPrograms.addAll(programs);
         notifyDataSetChanged();
     }
