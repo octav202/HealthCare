@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;
+import com.simona.healthcare.playing.PlayBarFragment;
 import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class ProgramsAdapter extends BaseAdapter {
         holder.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Play " + program.getName(), Toast.LENGTH_SHORT);
+                PlayBarFragment.getInstance().setProgram(program);
             }
         });
 

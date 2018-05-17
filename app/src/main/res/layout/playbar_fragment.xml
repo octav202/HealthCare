@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/currentProgramLayout">
+        <!-- Exercise -->
+        <TextView
+            android:id="@+id/exerciseText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:layout_marginStart="5dp"
+            android:text="Exercise"
+            android:textSize="18dp" />
+
+        <!-- Program -->
+        <TextView
+            android:id="@+id/programText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="8dp"
+            android:layout_marginStart="5dp"
+            android:text="Program"
+            android:textSize="15dp" />
+
+
+        <!-- Elapsed Time -->
+        <TextView
+            android:id="@+id/startText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/seekBar"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:text="0:00" />
+
+        <!-- Break-->
+        <TextView
+            android:id="@+id/breakText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/setText"
+            android:layout_centerHorizontal="true"
+            android:text="@string/break_text"
+            android:visibility="gone"
+            android:textSize="18dp"
+            android:textColor="@android:color/holo_green_dark"/>
+
+        <!-- Set number-->
+        <TextView
+            android:id="@+id/setText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/seekBar"
+            android:layout_centerHorizontal="true"
+            android:text="Set/break"
+            android:textSize="14dp"
+            android:textColor="@android:color/black"/>
+
+        <!-- Total Time -->
+        <TextView
+            android:id="@+id/endText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/seekBar"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:text="0:30" />
+
+        <!-- Seekbar -->
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
+
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noProgramText"
+        android:textSize="20dp"
+        android:layout_centerInParent="true"
+        android:text="@string/no_program"/>
+
+</RelativeLayout>

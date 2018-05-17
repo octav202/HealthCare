@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity"
-    tools:showIn="@layout/app_bar_main"
-    android:id="@+id/mainContent">
+    android:layout_height="match_parent">
 
-</FrameLayout>
+    <!-- Main Content -->
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".MainActivity"
+        tools:showIn="@layout/app_bar_main"
+        android:layout_above="@+id/barContent"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="55dp">
+    </FrameLayout>
+
+    <!-- Bottom Play Bar -->
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/barContent"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        tools:context=".MainActivity"
+        tools:showIn="@layout/app_bar_main"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/darker_gray">
+    </FrameLayout>
+
+
+</RelativeLayout>

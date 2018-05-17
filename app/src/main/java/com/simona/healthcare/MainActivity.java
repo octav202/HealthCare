@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.simona.healthcare.category.CategoriesFragment;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.exercise.ExercisesFragment;
+import com.simona.healthcare.playing.PlayBarFragment;
 import com.simona.healthcare.program.Program;
 import com.simona.healthcare.program.ProgramsFragment;
 
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        PlayBarFragment bar = PlayBarFragment.getInstance();
+        getFragmentManager().beginTransaction().replace(R.id.barContent, bar).commit();
     }
 
     @Override
