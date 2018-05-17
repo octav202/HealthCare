@@ -22,6 +22,10 @@
     <string name="select_exercises">Select exercises</string>
     <string name="select_days">Select days</string>
 
+    <string name="add_event">Add Event</string>
+    <string name="interval">Interval</string>
+
     <string name="no_program">No Program selected.</string>
     <string name="break_text">Break</string>
+    <string name="active">Active</string>
 </resources>

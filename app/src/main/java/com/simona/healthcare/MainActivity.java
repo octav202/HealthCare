@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.simona.healthcare.category.CategoriesFragment;
+import com.simona.healthcare.event.EventsFragment;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.playing.PlayBarFragment;
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = ExercisesFragment.newInstance(0);
                 break;
             case R.id.nav_events:
-                fragment = CategoriesFragment.newInstance(0);
+                fragment = EventsFragment.newInstance();
                 break;
             case R.id.nav_recipes:
                 fragment = CategoriesFragment.newInstance(0);
@@ -125,6 +126,10 @@ public class MainActivity extends AppCompatActivity
 
         if (mCurrentFragment instanceof ProgramsFragment) {
             ((ProgramsFragment) mCurrentFragment).add();
+        }
+
+        if (mCurrentFragment instanceof EventsFragment) {
+            ((EventsFragment) mCurrentFragment).add();
         }
     }
 }
