@@ -1,6 +1,7 @@
 package com.simona.healthcare;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -8,17 +9,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.simona.healthcare.category.CategoriesFragment;
 import com.simona.healthcare.event.EventsFragment;
-import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.playing.PlayBarFragment;
-import com.simona.healthcare.program.Program;
 import com.simona.healthcare.program.ProgramsFragment;
+import static com.simona.healthcare.utils.Constants.TAG;
+
+import static android.content.Intent.EXTRA_KEY_EVENT;
+import static com.simona.healthcare.utils.Constants.EXTRA_KEY;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -43,6 +47,41 @@ public class MainActivity extends AppCompatActivity
 
         PlayBarFragment bar = PlayBarFragment.getInstance();
         getFragmentManager().beginTransaction().replace(R.id.barContent, bar).commit();
+
+        if (getIntent() != null) {
+            String tab = getIntent().getStringExtra(EXTRA_KEY);
+            if (tab != null && tab.equals(EXTRA_KEY_EVENT)) {
+                loadFragment(EventsFragment.newInstance());
+                Log.d(TAG, "SHOULD OPEN EVENTS");
+            }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Log.d(TAG, "onStart()");
+        if (getIntent() != null) {
+            String tab = getIntent().getStringExtra(EXTRA_KEY);
+            if (tab != null && tab.equals(EXTRA_KEY_EVENT)) {
+                loadFragment(EventsFragment.newInstance());
+                Log.d(TAG, "SHOULD OPEN EVENTS");
+            }
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d(TAG, "onNewIntent()");
+        if (intent != null) {
+            String tab = intent.getStringExtra(EXTRA_KEY);
+            if (tab != null && tab.equals(EXTRA_KEY_EVENT)) {
+                loadFragment(EventsFragment.newInstance());
+                Log.d(TAG, "SHOULD OPEN EVENTS");
+            }
+        }
     }
 
     @Override

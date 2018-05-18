@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.simona.healthcare.event.Event;
+import com.simona.healthcare.event.EventManager;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
 
@@ -20,6 +21,8 @@ import static com.simona.healthcare.utils.Constants.TAG;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static DatabaseHelper sInstance;
+
+    private Context mContext;
 
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -67,6 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
     }
 
 
@@ -309,13 +313,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        int nextId = 0;
+        int nextId = 1;
         if (cursor.moveToFirst()) {
             String currentId = cursor.getString(0);
             if (currentId != null) {
                 nextId = Integer.parseInt(currentId) + 1;
             } else {
-                nextId = 0;
+                nextId = 1;
             }
         }
 
@@ -428,13 +432,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        int nextId = 0;
+        int nextId = 1;
         if (cursor.moveToFirst()) {
             String currentId = cursor.getString(0);
             if (currentId != null) {
                 nextId = Integer.parseInt(currentId) + 1;
             } else {
-                nextId = 0;
+                nextId = 1;
             }
         }
 
@@ -701,6 +705,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.endTransaction();
         db.close();
 
+        // Schedule notification for event
+        if (event.isActive()) {
+            EventManager.getInstance(mContext).addEvent(event);
+        }
+
         return true;
     }
 
@@ -732,6 +741,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.endTransaction();
         db.close();
 
+        // Remove scheduled event
+        EventManager.getInstance(mContext).cancelEvent(event);
+
+        // Schedule notification for event
+        if (event.isActive()) {
+            // Add updated event
+            EventManager.getInstance(mContext).addEvent(event);
+        }
+
         return true;
     }
 
@@ -754,6 +772,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();
+
+        EventManager.getInstance(mContext).cancelEvent(event);
 
         return true;
     }
@@ -821,13 +841,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        int nextId = 0;
+        int nextId = 1;
         if (cursor.moveToFirst()) {
             String currentId = cursor.getString(0);
             if (currentId != null) {
                 nextId = Integer.parseInt(currentId) + 1;
             } else {
-                nextId = 0;
+                nextId = 1;
             }
         }
 
