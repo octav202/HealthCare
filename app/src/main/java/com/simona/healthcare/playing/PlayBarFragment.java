@@ -16,6 +16,7 @@ import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
 import com.simona.healthcare.utils.DatabaseHelper;
+import com.simona.healthcare.utils.Utils;
 
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -139,18 +140,40 @@ public class PlayBarFragment extends Fragment{
     }
 
     /**
-     * Text to speech.
+     * Text to speech - start, stop, exercise name, sets, reps.
+     *
      * @param text
      */
     private void playSound(final String text) {
-        mTTSExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-            }
-        });
+        if (Utils.getProgramTTS(mContext)) {
+            mTTSExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
+            });
+        }
     }
 
+    /**
+     * Text to speech - Rep Number.
+     *
+     * @param repNumber
+     */
+    private void playRepNumber(final int repNumber) {
+        if (Utils.getRepsTTS(mContext)) {
+            mTTSExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    textToSpeech.speak(String.valueOf(repNumber), TextToSpeech.QUEUE_FLUSH, null);
+                }
+            });
+        }
+    }
+
+    /**
+     * Program Play Runnable.
+     */
     private Runnable mExerciseRunnable = new Runnable() {
         @Override
         public void run() {
@@ -162,24 +185,30 @@ public class PlayBarFragment extends Fragment{
 
             // Exercises
             for (final Exercise e : mProgram.getExercises()) {
-                // Exercise Name
-                playSound(e.getName());
-                // Reps and sets
-                playSound(String.format(mContext.getResources().getString(R.string.exercise_tts),
-                        e.getSets(), e.getRepsPerSet()));
-
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mExerciseText.setText(e.getName());
+                        mElapsedText.setText("0");
                         mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+                        mSeekbar.setProgress(0);
                         mSeekbar.setMax(e.getRepsPerSet());
                     }
                 });
 
+                // Exercise Name
+                playSound(e.getName());
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
+                } catch (InterruptedException exc) {
+                }
+                // Reps and sets
+                playSound(String.format(mContext.getResources().getString(R.string.exercise_tts),
+                        e.getSets(), e.getRepsPerSet()));
+
+                try {
+                    Thread.sleep(4000);
                 } catch (InterruptedException exc) {
                 }
 
@@ -190,16 +219,24 @@ public class PlayBarFragment extends Fragment{
 
                     /* ____________________ START SET _____________________*/
 
-                    playSound(mContext.getResources().getString(R.string.start_tts));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mElapsedText.setText("0");
                             mTotalText.setText(String.valueOf(e.getRepsPerSet()));
                             mSeekbar.setMax(e.getRepsPerSet());
                             mSetText.setText("Set " + (setNumber.get()) + "/" +e.getSets());
                             mBreakText.setVisibility(View.GONE);
+                            mSeekbar.setProgress(0);
                         }
                     });
+                    playSound(mContext.getResources().getString(R.string.start_tts));
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
 
                     // Execute Set
                     for (final AtomicInteger reps = new AtomicInteger(1);
@@ -212,7 +249,7 @@ public class PlayBarFragment extends Fragment{
                             public void run() {
                                 mElapsedText.setText(String.valueOf(reps));
                                 mSeekbar.setProgress(reps.get());
-                                playSound(String.valueOf(reps.get()));
+                                playRepNumber(reps.get());
                             }
                         });
 

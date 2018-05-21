@@ -6,9 +6,6 @@
     <item android:title="Workout">
         <menu>
             <item
-                android:id="@+id/nav_categ"
-                android:title="Categories" />
-            <item
                 android:id="@+id/nav_prog"
                 android:title="Programs" />
             <item
@@ -25,6 +22,14 @@
             <item
                 android:id="@+id/nav_recipes"
                 android:title="Recipes" />
+        </menu>
+    </item>
+
+    <item android:title="Settings">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:title="Settings" />
         </menu>
     </item>
 

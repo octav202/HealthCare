@@ -19,6 +19,8 @@ import com.simona.healthcare.event.EventsFragment;
 import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.playing.PlayBarFragment;
 import com.simona.healthcare.program.ProgramsFragment;
+import com.simona.healthcare.settings.SettingsFragment;
+
 import static com.simona.healthcare.utils.Constants.TAG;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY_EVENTS;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY;
@@ -121,8 +123,8 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
 
         switch (item.getItemId()) {
-            case R.id.nav_categ:
-                fragment = CategoriesFragment.newInstance(0);
+            case R.id.nav_settings:
+                fragment = SettingsFragment.newInstance(0);
                 break;
             case R.id.nav_prog:
                 fragment = ProgramsFragment.newInstance(0);
