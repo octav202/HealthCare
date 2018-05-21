@@ -20,7 +20,6 @@ import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.playing.PlayBarFragment;
 import com.simona.healthcare.program.ProgramsFragment;
 import static com.simona.healthcare.utils.Constants.TAG;
-
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY_EVENTS;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY;
 

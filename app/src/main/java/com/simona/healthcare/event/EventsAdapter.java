@@ -56,7 +56,7 @@ public class EventsAdapter extends BaseAdapter {
         final Event event = mEvents.get(position);
         holder.nameTextView.setText(event.getName());
         holder.descriptionTextView.setText(event.getDescription());
-        holder.intervalTextView.setText(String.valueOf(event.getInterval()));
+        holder.intervalTextView.setText("Frequency - " + String.valueOf(event.getInterval()) + " min.");
         holder.activeCheckBox.setChecked(event.isActive() ? true : false);
 
         holder.activeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
