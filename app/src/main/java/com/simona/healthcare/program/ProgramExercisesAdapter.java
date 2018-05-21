@@ -64,8 +64,7 @@ public class ProgramExercisesAdapter extends BaseAdapter {
         final Exercise exercise = mExercises.get(position);
         holder.nameTextView.setText(exercise.getName());
         holder.setsTextView.setText(exercise.getSets() + " sets,  " + exercise.getRepsPerSet() + " reps.");
-        holder.durationTextView.setText(exercise.getSetDuration() + " sec. per set" +
-                ", " + exercise.getBreak() + " sec. break");
+        holder.durationTextView.setText("Break : " + exercise.getBreak() + " sec.");
         holder.descriptionTextView.setText(exercise.getDescription());
         //holder.imageView.setImageDrawable(exercise.getImagePath());
 

@@ -3,6 +3,7 @@ package com.simona.healthcare.playing;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
 import com.simona.healthcare.utils.DatabaseHelper;
 
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,6 +28,7 @@ public class PlayBarFragment extends Fragment{
     private Context mContext;
     private Program mProgram;
     private ExecutorService mExecutor;
+    private ExecutorService mTTSExecutor;
 
     // UI
     private RelativeLayout mCurrentProgramLayout;
@@ -37,6 +40,9 @@ public class PlayBarFragment extends Fragment{
     private TextView mElapsedText;
     private TextView mTotalText;
     private SeekBar mSeekbar;
+
+    // TextToSpeech
+    TextToSpeech textToSpeech;
 
     public static PlayBarFragment getInstance() {
         if (sInstance == null) {
@@ -53,6 +59,17 @@ public class PlayBarFragment extends Fragment{
 
         mContext = getActivity().getApplicationContext();
         mExecutor = Executors.newSingleThreadExecutor();
+        mTTSExecutor = Executors.newSingleThreadExecutor();
+
+        textToSpeech=new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.UK);
+                    textToSpeech.setSpeechRate(0.8f);
+                }
+            }
+        });
 
         mCurrentProgramLayout = view.findViewById(R.id.currentProgramLayout);
         mNoProgramText = view.findViewById(R.id.noProgramText);
@@ -112,50 +129,90 @@ public class PlayBarFragment extends Fragment{
                     mContext).getExercisesForProgramId(mProgram.getId()));
         }
 
+        // Speech - program name
+        String programText = mContext.getResources().getString(R.string.starting_program) + " "
+                + mProgram.getName();
+        playSound(programText);
+
         mExecutor.execute(mExerciseRunnable);
 
+    }
+
+    /**
+     * Text to speech.
+     * @param text
+     */
+    private void playSound(final String text) {
+        mTTSExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
     }
 
     private Runnable mExerciseRunnable = new Runnable() {
         @Override
         public void run() {
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+            }
+
             // Exercises
             for (final Exercise e : mProgram.getExercises()) {
+                // Exercise Name
+                playSound(e.getName());
+                // Reps and sets
+                playSound(String.format(mContext.getResources().getString(R.string.exercise_tts),
+                        e.getSets(), e.getRepsPerSet()));
+
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mExerciseText.setText(e.getName());
-                        mTotalText.setText(String.valueOf(e.getSetDuration()));
-                        mSeekbar.setMax(e.getSetDuration());
+                        mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+                        mSeekbar.setMax(e.getRepsPerSet());
                     }
                 });
 
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException exc) {
+                }
+
                 // Sets
-                for (final AtomicInteger setNumber = new AtomicInteger();
-                     setNumber.get() < e.getSets();
+                for (final AtomicInteger setNumber = new AtomicInteger(1);
+                     setNumber.get() <= e.getSets();
                      setNumber.set(setNumber.get() + 1)) {
 
+                    /* ____________________ START SET _____________________*/
+
+                    playSound(mContext.getResources().getString(R.string.start_tts));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mTotalText.setText(String.valueOf(e.getSetDuration()));
-                            mSeekbar.setMax(e.getSetDuration());
-                            mSetText.setText("Set " + (setNumber.get() + 1) + "/" +e.getSets());
+                            mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+                            mSeekbar.setMax(e.getRepsPerSet());
+                            mSetText.setText("Set " + (setNumber.get()) + "/" +e.getSets());
                             mBreakText.setVisibility(View.GONE);
                         }
                     });
 
-                    // TODO Play Sound
                     // Execute Set
-                    for (final AtomicInteger reps = new AtomicInteger();
-                         reps.get() < e.getSetDuration();
+                    for (final AtomicInteger reps = new AtomicInteger(1);
+                         reps.get() <= e.getRepsPerSet();
                          reps.set(reps.get() + 1)) {
 
+                        /* ____________________ REPS _____________________*/
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mElapsedText.setText(String.valueOf(reps));
                                 mSeekbar.setProgress(reps.get());
+                                playSound(String.valueOf(reps.get()));
                             }
                         });
 
@@ -166,8 +223,9 @@ public class PlayBarFragment extends Fragment{
                         }
                     }
 
-                    // TODO Play break sound
-                    // Execute break
+                    /* ____________________ BREAK _____________________*/
+
+                    playSound(mContext.getResources().getString(R.string.stop_tts));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -199,8 +257,9 @@ public class PlayBarFragment extends Fragment{
                     }
 
                 }
-
             }
+
+            playSound(mContext.getResources().getString(R.string.end_program));
 
             // End of program
             getActivity().runOnUiThread(new Runnable() {

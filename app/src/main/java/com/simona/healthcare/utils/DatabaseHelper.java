@@ -46,7 +46,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_NAME = "name";
     private static final String KEY_SETS = "sets";
     private static final String KEY_REPS = "reps";
-    private static final String KEY_SET_DURATION = "set_duration";
     private static final String KEY_BREAK_DURATION = "break_duration";
     private static final String KEY_DESCRIPTION = "description";
 
@@ -85,7 +84,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_NAME + " TEXT,"
                 + KEY_SETS + " INTEGER,"
                 + KEY_REPS + " INTEGER,"
-                + KEY_SET_DURATION + " INTEGER,"
                 + KEY_BREAK_DURATION + " INTEGER,"
                 + KEY_DESCRIPTION + " TEXT" + ")";
         db.execSQL(CREATE_EXERCISES_TABLE);
@@ -147,7 +145,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_NAME, ex.getName());
         values.put(KEY_SETS, ex.getSets());
         values.put(KEY_REPS, ex.getRepsPerSet());
-        values.put(KEY_SET_DURATION, ex.getSetDuration());
         values.put(KEY_BREAK_DURATION, ex.getBreak());
         values.put(KEY_DESCRIPTION, ex.getDescription());
         long status = db.insertOrThrow(TABLE_EXERCISES, null, values);
@@ -178,7 +175,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_NAME, ex.getName());
         values.put(KEY_SETS, ex.getSets());
         values.put(KEY_REPS, ex.getRepsPerSet());
-        values.put(KEY_SET_DURATION, ex.getSetDuration());
         values.put(KEY_BREAK_DURATION, ex.getBreak());
         values.put(KEY_DESCRIPTION, ex.getDescription());
         long status = db.update(TABLE_EXERCISES, values,
@@ -233,8 +229,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_EXERCISES,
-                new String[]{KEY_ID, KEY_NAME, KEY_SETS, KEY_REPS,
-                        KEY_SET_DURATION, KEY_BREAK_DURATION, KEY_DESCRIPTION},
+                new String[]{KEY_ID, KEY_NAME, KEY_SETS, KEY_REPS, KEY_BREAK_DURATION, KEY_DESCRIPTION},
                 KEY_ID + "=?",
                 new String[]{String.valueOf(id)},
                 null, null, null, null);
@@ -247,9 +242,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ex.setName(cursor.getString(1));
         ex.setSets(cursor.getInt(2));
         ex.setRepsPerSet(cursor.getInt(3));
-        ex.setSetDuration(cursor.getInt(4));
-        ex.setBreak(cursor.getInt(5));
-        ex.setDescription(cursor.getString(6));
+        ex.setBreak(cursor.getInt(4));
+        ex.setDescription(cursor.getString(5));
 
         return ex;
     }
@@ -271,9 +265,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ex.setName(cursor.getString(1));
                 ex.setSets(cursor.getInt(2));
                 ex.setRepsPerSet(cursor.getInt(3));
-                ex.setSetDuration(cursor.getInt(4));
-                ex.setBreak(cursor.getInt(5));
-                ex.setDescription(cursor.getString(6));
+                ex.setBreak(cursor.getInt(4));
+                ex.setDescription(cursor.getString(5));
                 exercises.add(ex);
             } while (cursor.moveToNext());
         } else {

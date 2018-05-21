@@ -91,11 +91,6 @@ public class ExercisesFragment extends Fragment {
         repsInput.setHint(R.string.reps);
         repsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-        // Set Duration
-        final EditText setDurationInput = new EditText(getActivity());
-        setDurationInput.setHint(R.string.set_duration);
-        setDurationInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-
         // Break Duration
         final EditText breakInput = new EditText(getActivity());
         breakInput.setHint(R.string.break_duration);
@@ -108,7 +103,6 @@ public class ExercisesFragment extends Fragment {
         layout.addView(nameInput);
         layout.addView(setsInput);
         layout.addView(repsInput);
-        layout.addView(setDurationInput);
         layout.addView(breakInput);
         layout.addView(descriptionInput);
         alert.setView(layout);
@@ -123,7 +117,6 @@ public class ExercisesFragment extends Fragment {
                 String name = nameInput.getText().toString().trim();
                 String sets = setsInput.getText().toString().trim();
                 String reps = repsInput.getText().toString().trim();
-                String setDuration = setDurationInput.getText().toString().trim();
                 String breakDuration = breakInput.getText().toString().trim();
                 String description = descriptionInput.getText().toString().trim();
 
@@ -132,7 +125,6 @@ public class ExercisesFragment extends Fragment {
                 ex.setName(name);
                 ex.setSets(Integer.parseInt(sets));
                 ex.setRepsPerSet(Integer.parseInt(reps));
-                ex.setSetDuration(Integer.parseInt(setDuration));
                 ex.setBreak(Integer.parseInt(breakDuration));
                 ex.setDescription(description);
 
@@ -173,10 +165,6 @@ public class ExercisesFragment extends Fragment {
         final EditText repsInput = new EditText(getActivity());
         repsInput.setText(String.valueOf(exercise.getRepsPerSet()));
 
-        // Set Duration
-        final EditText setDurationInput = new EditText(getActivity());
-        setDurationInput.setText(String.valueOf(exercise.getSetDuration()));
-
         // Break Duration
         final EditText breakInput = new EditText(getActivity());
         breakInput.setText(String.valueOf(exercise.getBreak()));
@@ -188,7 +176,6 @@ public class ExercisesFragment extends Fragment {
         layout.addView(nameInput);
         layout.addView(setsInput);
         layout.addView(repsInput);
-        layout.addView(setDurationInput);
         layout.addView(breakInput);
         layout.addView(descriptionInput);
         alert.setView(layout);
@@ -203,7 +190,6 @@ public class ExercisesFragment extends Fragment {
                 String name = nameInput.getText().toString().trim();
                 String sets = setsInput.getText().toString().trim();
                 String reps = repsInput.getText().toString().trim();
-                String setDuration = setDurationInput.getText().toString().trim();
                 String breakDuration = breakInput.getText().toString().trim();
                 String description = descriptionInput.getText().toString().trim();
 
@@ -211,7 +197,6 @@ public class ExercisesFragment extends Fragment {
                 exercise.setName(name);
                 exercise.setSets(Integer.parseInt(sets));
                 exercise.setRepsPerSet(Integer.parseInt(reps));
-                exercise.setSetDuration(Integer.parseInt(setDuration));
                 exercise.setBreak(Integer.parseInt(breakDuration));
                 exercise.setDescription(description);
 

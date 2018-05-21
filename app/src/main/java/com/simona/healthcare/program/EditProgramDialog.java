@@ -77,25 +77,12 @@ public class EditProgramDialog extends Dialog {
                     return;
                 }
 
-                // Program Exercises
-                if (mAdapter.getSelectedItems().size() == 0){
-                    Toast.makeText(context, "Please select some exercises..", Toast.LENGTH_SHORT)
-                            .show();
-                    return;
-                }
-
                 // Program Days
                 List<Integer> days = new ArrayList<>();
                 for (Button b : mDays) {
                     if (b.isSelected()) {
                         days.add(Integer.parseInt(b.getTag().toString()));
                     }
-                }
-
-                if (days.size() == 0) {
-                    Toast.makeText(context, "Please select at least one day..", Toast.LENGTH_SHORT)
-                            .show();
-                    return;
                 }
 
                 // Edit Program

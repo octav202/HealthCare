@@ -10,10 +10,6 @@ public class Exercise {
 
     //Number of repetitions per set - ex. 3 sets of 20 reps
     private int mRepsPerSet;
-
-    // Set duration - ex. 1 set - 30 seconds
-    private int mSetDuration;
-
     // Break between sets - ex. 30sec between sets
     private int mBreak;
 
@@ -23,17 +19,15 @@ public class Exercise {
         this.mDescription = "";
         this.mSets = 0;
         this.mRepsPerSet = 0;
-        this.mSetDuration = 0;
         this.mBreak = 0;
     }
 
-    public Exercise(int mId, String mName, String mDescription, int mSets, int mRepsPerSet, int mSetDuration, int mBreak) {
+    public Exercise(int mId, String mName, String mDescription, int mSets, int mRepsPerSet, int mBreak) {
         this.mId = mId;
         this.mName = mName;
         this.mDescription = mDescription;
         this.mSets = mSets;
         this.mRepsPerSet = mRepsPerSet;
-        this.mSetDuration = mSetDuration;
         this.mBreak = mBreak;
     }
 
@@ -77,13 +71,6 @@ public class Exercise {
         this.mRepsPerSet = mRepsPerSet;
     }
 
-    public int getSetDuration() {
-        return mSetDuration;
-    }
-
-    public void setSetDuration(int mSetDuration) {
-        this.mSetDuration = mSetDuration;
-    }
 
     public int getBreak() {
         return mBreak;
@@ -101,7 +88,6 @@ public class Exercise {
                 ", mDescription='" + mDescription + '\'' +
                 ", mSets=" + mSets +
                 ", mRepsPerSet=" + mRepsPerSet +
-                ", mSetDuration=" + mSetDuration +
                 ", mBreak=" + mBreak +
                 '}';
     }
