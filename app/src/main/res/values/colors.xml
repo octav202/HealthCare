@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/red</color>
-    <color name="colorPrimaryDark">@color/dark_red</color>
-    <color name="colorAccent">#0084b4</color>
+    <color name="colorPrimary">#FF7A65</color>
+    <color name="colorPrimaryDark">#CD5B45</color>
+    <color name="colorAccent">#53CCB1</color>
 
-    <color name="red">#B00020</color>
-    <color name="dark_red">#7b0016</color>
     <color name="title_color">#E7E7E7</color>
 
-    <color name="list_item_background">@android:color/darker_gray</color>
+    <color name="activity_background">#FFFFFF</color>
+    <color name="list_item_background">#80003133</color>
+    <color name="play_bar_background">#FF7A65</color>
 </resources>

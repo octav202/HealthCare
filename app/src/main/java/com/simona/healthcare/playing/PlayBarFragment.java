@@ -28,8 +28,8 @@ public class PlayBarFragment extends Fragment{
     private static PlayBarFragment sInstance;
     private Context mContext;
     private Program mProgram;
-    private ExecutorService mExecutor;
     private ExecutorService mTTSExecutor;
+    private PlayThread mPlayThread;
 
     // UI
     private RelativeLayout mCurrentProgramLayout;
@@ -37,7 +37,7 @@ public class PlayBarFragment extends Fragment{
     private TextView mProgramText;
     private TextView mExerciseText;
     private TextView mSetText;
-    private TextView mBreakText;
+    private TextView mCurrentRep;
     private TextView mElapsedText;
     private TextView mTotalText;
     private SeekBar mSeekbar;
@@ -59,8 +59,8 @@ public class PlayBarFragment extends Fragment{
         View view = inflater.inflate(R.layout.playbar_fragment, container, false);
 
         mContext = getActivity().getApplicationContext();
-        mExecutor = Executors.newSingleThreadExecutor();
         mTTSExecutor = Executors.newSingleThreadExecutor();
+        mPlayThread = new PlayThread();
 
         textToSpeech=new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
             @Override
@@ -77,7 +77,7 @@ public class PlayBarFragment extends Fragment{
         mProgramText = view.findViewById(R.id.programText);
         mExerciseText = view.findViewById(R.id.exerciseText);
         mSetText = view.findViewById(R.id.setText);
-        mBreakText = view.findViewById(R.id.breakText);
+        mCurrentRep = view.findViewById(R.id.currentRep);
         mElapsedText = view.findViewById(R.id.startText);
         mTotalText = view.findViewById(R.id.endText);
         mSeekbar = view.findViewById(R.id.seekBar);
@@ -100,23 +100,15 @@ public class PlayBarFragment extends Fragment{
      */
     public void setProgram(Program program) {
         mProgram = program;
-
         textToSpeech.stop();
-        mExecutor.shutdownNow();
-        mTTSExecutor.shutdownNow();
+        mPlayThread.interrupt();
 
         if (program == null) {
             // Stop Program
             mCurrentProgramLayout.setVisibility(View.GONE);
             mNoProgramText.setVisibility(View.VISIBLE);
-            textToSpeech.stop();
-            mExecutor.shutdownNow();
-            mTTSExecutor.shutdownNow();
         } else {
-            // Start Program
-            mExecutor = Executors.newSingleThreadExecutor();
-            mTTSExecutor = Executors.newSingleThreadExecutor();
-
+            mPlayThread = new PlayThread();
             setupViewForProgram();
             startProgram();
         }
@@ -145,13 +137,7 @@ public class PlayBarFragment extends Fragment{
                     mContext).getExercisesForProgramId(mProgram.getId()));
         }
 
-        // Speech - program name
-        String programText = mContext.getResources().getString(R.string.starting_program) + " "
-                + mProgram.getName();
-        playSound(programText);
-
-        mExecutor.execute(mExerciseRunnable);
-
+        mPlayThread.start();
     }
 
     /**
@@ -186,16 +172,32 @@ public class PlayBarFragment extends Fragment{
         }
     }
 
-    /**
-     * Program Play Runnable.
-     */
-    private Runnable mExerciseRunnable = new Runnable() {
+    public class PlayThread extends Thread {
+
+        private static final int REP_DURATION = 1000;
+        private static final int TTS_PROGRAM_NAME = 3000;
+        private static final int TTS_EXERCISE_NAME = 1000;
+        private static final int TTS_SETS_REPS_DESCRIPTION= 4000;
+        private static final int TTS_START_DURATION= 2000;
+        private static final int TTS_STOP_DURATION= 1000;
+
+        @Override
+        public synchronized void start() {
+            super.start();
+        }
+
         @Override
         public void run() {
 
+            // Speech - program name
+            String programText = mContext.getResources().getString(R.string.starting_program) + " "
+                    + mProgram.getName();
+            playSound(programText);
+
             try {
-                Thread.sleep(3000);
+                Thread.sleep(TTS_PROGRAM_NAME);
             } catch (InterruptedException e) {
+                return;
             }
 
             if (mProgram == null) {
@@ -219,7 +221,7 @@ public class PlayBarFragment extends Fragment{
                 // Exercise Name
                 playSound(e.getName());
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(TTS_EXERCISE_NAME);
                 } catch (InterruptedException exc) {
                 }
                 // Reps and sets
@@ -227,16 +229,15 @@ public class PlayBarFragment extends Fragment{
                         e.getSets(), e.getRepsPerSet()));
 
                 try {
-                    Thread.sleep(4000);
+                    Thread.sleep(TTS_SETS_REPS_DESCRIPTION);
                 } catch (InterruptedException exc) {
+                    return;
                 }
 
-                // Sets
+                /* ____________________ SETS _____________________*/
                 for (final AtomicInteger setNumber = new AtomicInteger(1);
                      setNumber.get() <= e.getSets();
                      setNumber.set(setNumber.get() + 1)) {
-
-                    /* ____________________ START SET _____________________*/
 
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -245,53 +246,55 @@ public class PlayBarFragment extends Fragment{
                             mTotalText.setText(String.valueOf(e.getRepsPerSet()));
                             mSeekbar.setMax(e.getRepsPerSet());
                             mSetText.setText("Set " + (setNumber.get()) + "/" +e.getSets());
-                            mBreakText.setVisibility(View.GONE);
+                            mCurrentRep.setVisibility(View.GONE);
                             mSeekbar.setProgress(0);
                         }
                     });
-                    playSound(mContext.getResources().getString(R.string.start_tts));
 
+                    // Play Sound - Start
+                    playSound(mContext.getResources().getString(R.string.start_tts));
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(TTS_START_DURATION);
                     } catch (InterruptedException e1) {
-                        e1.printStackTrace();
+                        return;
                     }
 
-                    // Execute Set
+                    /* ____________________ REPS _____________________________*/
                     for (final AtomicInteger reps = new AtomicInteger(1);
                          reps.get() <= e.getRepsPerSet();
                          reps.set(reps.get() + 1)) {
-
-                        /* ____________________ REPS _____________________*/
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mElapsedText.setText(String.valueOf(reps));
                                 mSeekbar.setProgress(reps.get());
-                                playRepNumber(reps.get());
                             }
                         });
 
+                        // Play Rep Number
+                        playRepNumber(reps.get());
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(REP_DURATION);
                         } catch (InterruptedException e1) {
-                            e1.printStackTrace();
+                            return;
                         }
                     }
 
                     /* ____________________ BREAK _____________________*/
 
-                    playSound(mContext.getResources().getString(R.string.stop_tts));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mBreakText.setVisibility(View.VISIBLE);
+                            mCurrentRep.setVisibility(View.VISIBLE);
                             mElapsedText.setText(String.valueOf(0));
                             mTotalText.setText(String.valueOf(e.getBreak()));
                             mSeekbar.setMax(e.getBreak());
                             mSeekbar.setProgress(0);
                         }
                     });
+
+                    // Play Sound - Stop
+                    playSound(mContext.getResources().getString(R.string.stop_tts));
 
                     for (final AtomicInteger br = new AtomicInteger();
                          br.get() < e.getBreak();
@@ -306,9 +309,9 @@ public class PlayBarFragment extends Fragment{
                         });
 
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(TTS_STOP_DURATION);
                         } catch (InterruptedException e1) {
-                            e1.printStackTrace();
+                            return;
                         }
                     }
 
@@ -325,5 +328,5 @@ public class PlayBarFragment extends Fragment{
                 }
             });
         }
-    };
+    }
 }

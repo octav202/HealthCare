@@ -156,17 +156,11 @@ public class EditProgramDialog extends Dialog {
                 for (Button b : mDays) {
                     if (Integer.parseInt(b.getTag().toString()) == day) {
                         b.setSelected(true);
-
-//                        if (b.isSelected()) {
-//                            b.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
-//                        } else {
-//                            b.setBackgroundColor(Color.GRAY);
-//                        }
                     }
                 }
             }
         } else {
-            mDeleteButton.setVisibility(View.GONE);
+            mDeleteButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -186,11 +180,6 @@ public class EditProgramDialog extends Dialog {
             public void onClick(View v) {
                 Button b = (Button) v;
                 b.setSelected(!b.isSelected());
-//                if (b.isSelected()) {
-//                    b.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
-//                } else {
-//                    b.setBackgroundColor(Color.GRAY);
-//                }
             }
         };
 

@@ -9,8 +9,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:text="@string/tts"
-        android:textColor="@color/colorAccent"
-        android:textSize="15dp"
+        android:textColor="@color/list_item_background"
+        android:textSize="16dp"
         android:textStyle="bold" />
 
     <!-- Program TTS-->

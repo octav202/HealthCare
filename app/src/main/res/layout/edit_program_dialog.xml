@@ -163,7 +163,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:text="@string/delete"
-            android:textColor="@color/colorPrimary"/>
+            android:textColor="@android:color/holo_red_dark"/>
 
         <Button
             android:id="@+id/cancelButton"
@@ -172,7 +172,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:text="@string/cancel"
-            android:textColor="@color/colorAccent"
+            android:textColor="@android:color/black"
             />
 
         <Button
@@ -182,7 +182,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:text="@string/ok"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@android:color/black" />
     </LinearLayout>
 
 </RelativeLayout>
