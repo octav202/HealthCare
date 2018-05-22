@@ -1,145 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/title_color">
 
     <!-- Name -->
-    <EditText android:id="@+id/programNameText"
+    <EditText
+        android:id="@+id/programNameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/name"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="10dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:hint="@string/name" />
 
     <!-- Exercises -->
-    <TextView android:id="@+id/exercisesTextView"
+    <TextView
+        android:id="@+id/exercisesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/programNameText"
+        android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:text="@string/select_exercises"/>
+        android:text="@string/select_exercises"
+        android:textColor="@android:color/black"
+        android:textSize="16dp"
+        android:textStyle="bold"/>
 
-    <ListView android:id="@+id/addExerciseList"
+    <ListView
+        android:id="@+id/addExerciseList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/daysTextView"
         android:layout_below="@+id/exercisesTextView"
-        android:layout_above="@id/daysTextView"/>
+        android:layout_margin="5dp"/>
 
     <!-- Days -->
-    <TextView android:id="@+id/daysTextView"
+    <TextView
+        android:id="@+id/daysTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/daysLayout"
-        android:layout_margin="10dp"
-        android:text="@string/select_days"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/select_days"
+        android:textColor="@android:color/black"
+        android:textSize="16dp"
+        android:textStyle="bold"/>
 
     <LinearLayout
+        android:id="@+id/daysLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/daysLayout"
         android:layout_above="@+id/buttonsLayout"
         android:orientation="horizontal"
         android:weightSum="7">
 
         <!-- Monday -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/monday"
-            android:text="Mo"
-            android:textSize="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/day_button_selector"
             android:tag="1"
-            android:layout_margin="1dp"/>
+            android:text="Mo"
+            android:textSize="10dp" />
 
         <!-- Tuesday -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/tuesday"
-            android:text="Tu"
-            android:textSize="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/day_button_selector"
             android:tag="2"
-            android:layout_margin="1dp"/>
+            android:text="Tu"
+            android:textSize="10dp" />
 
         <!-- Wednesday -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/wednesday"
-            android:text="We"
-            android:textSize="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/day_button_selector"
             android:tag="3"
-            android:layout_margin="1dp"/>
+            android:text="We"
+            android:textSize="10dp" />
 
         <!-- Thursday -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/thursday"
-            android:text="Th"
-            android:textSize="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/day_button_selector"
             android:tag="4"
-            android:layout_margin="1dp"/>
+            android:text="Th"
+            android:textSize="10dp" />
 
         <!-- Friday -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/friday"
-            android:text="Fr"
-            android:textSize="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/day_button_selector"
             android:tag="5"
-            android:layout_margin="1dp"/>
+            android:text="Fr"
+            android:textSize="10dp" />
 
         <!-- Satuday -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/saturday"
-            android:text="Sa"
-            android:textSize="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/day_button_selector"
             android:tag="6"
-            android:layout_margin="1dp"/>
+            android:text="Sa"
+            android:textSize="10dp" />
 
         <!-- Sunday -->
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/sunday"
-            android:text="Su"
-            android:textSize="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/day_button_selector"
             android:tag="7"
-            android:layout_marginTop="1dp"/>
+            android:text="Su"
+            android:textSize="10dp" />
     </LinearLayout>
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <LinearLayout
         android:id="@+id/buttonsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:weightSum="3"
-        android:layout_alignParentBottom="true">
+        android:weightSum="3">
 
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
             android:text="@string/delete"
-            android:layout_margin="5dp"/>
+            android:textColor="@color/colorPrimary"/>
 
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <Button
             android:id="@+id/cancelButton"
-            android:text="@string/cancel"
-            android:layout_margin="5dp"/>
-
-        <Button android:layout_width="wrap_content"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textColor="@color/colorAccent"
+            />
+
+        <Button
             android:id="@+id/okButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
             android:text="@string/ok"
-            android:layout_margin="5dp"/>
+            android:textColor="@color/colorAccent" />
     </LinearLayout>
 
 </RelativeLayout>

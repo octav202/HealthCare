@@ -2,18 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/darker_gray"
+    android:background="@drawable/list_item_background"
     android:orientation="vertical">
 
     <!-- Exercise image -->
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="3dp"
-        android:background="@android:color/white" />
+        android:layout_centerVertical="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_photo"/>
 
     <TextView
         android:id="@+id/nameTextView"
@@ -21,8 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/imageView"
-        android:textColor="@android:color/black"
-        android:textSize="9dp"
+        android:textColor="@android:color/white"
+        android:textSize="11dp"
         android:textStyle="bold"
         android:ellipsize="end"
         android:maxLines="1"/>
@@ -36,7 +39,7 @@
         android:layout_margin="2dp"
         android:layout_toEndOf="@+id/imageView"
         android:textColor="@android:color/black"
-        android:textSize="9dp"
+        android:textSize="10dp"
         android:ellipsize="end"
         android:maxLines="1"/>
 
@@ -49,7 +52,7 @@
         android:layout_margin="2dp"
         android:layout_toEndOf="@+id/imageView"
         android:textColor="@android:color/black"
-        android:textSize="9dp"
+        android:textSize="10dp"
         android:ellipsize="end"
         android:maxLines="1"/>
 
@@ -62,7 +65,7 @@
         android:layout_margin="2dp"
         android:layout_toEndOf="@+id/imageView"
         android:textColor="@android:color/black"
-        android:textSize="9dp"
+        android:textSize="10dp"
         android:ellipsize="end"
         android:maxLines="1"/>
 

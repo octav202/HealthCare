@@ -76,11 +76,27 @@ public class ProgramsAdapter extends BaseAdapter {
 
         holder.exercisesTextView.setText(builder.toString());
 
+        Program playing = PlayBarFragment.getInstance().getProgram();
+        if (playing !=null && playing.getId() == program.getId()) {
+            holder.playButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_pause));
+        } else {
+            holder.playButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_play));
+        }
+
         // Start Program
         holder.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlayBarFragment.getInstance().setProgram(program);
+
+                Program playing = PlayBarFragment.getInstance().getProgram();
+                if (playing !=null && playing.getId() == program.getId()) {
+                    // Stop Program
+                    PlayBarFragment.getInstance().setProgram(null);
+                } else {
+                    // Play Program
+                    PlayBarFragment.getInstance().setProgram(program);
+                }
+                notifyDataSetChanged();
             }
         });
 

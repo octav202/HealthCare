@@ -16,8 +16,8 @@
         android:bottom="10dp" />
 
     <gradient
-        android:endColor="#A6000000"
-        android:startColor="#A6000000"
+        android:endColor="@color/list_item_background"
+        android:startColor="@color/list_item_background"
         android:angle="90"/>
     <corners
         android:bottomRightRadius="6dp"

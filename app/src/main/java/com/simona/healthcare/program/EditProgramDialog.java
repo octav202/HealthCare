@@ -157,11 +157,11 @@ public class EditProgramDialog extends Dialog {
                     if (Integer.parseInt(b.getTag().toString()) == day) {
                         b.setSelected(true);
 
-                        if (b.isSelected()) {
-                            b.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
-                        } else {
-                            b.setBackgroundColor(Color.GRAY);
-                        }
+//                        if (b.isSelected()) {
+//                            b.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
+//                        } else {
+//                            b.setBackgroundColor(Color.GRAY);
+//                        }
                     }
                 }
             }
@@ -186,11 +186,11 @@ public class EditProgramDialog extends Dialog {
             public void onClick(View v) {
                 Button b = (Button) v;
                 b.setSelected(!b.isSelected());
-                if (b.isSelected()) {
-                    b.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
-                } else {
-                    b.setBackgroundColor(Color.GRAY);
-                }
+//                if (b.isSelected()) {
+//                    b.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
+//                } else {
+//                    b.setBackgroundColor(Color.GRAY);
+//                }
             }
         };
 

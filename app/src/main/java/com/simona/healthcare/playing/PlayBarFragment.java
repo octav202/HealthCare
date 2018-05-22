@@ -100,15 +100,30 @@ public class PlayBarFragment extends Fragment{
      */
     public void setProgram(Program program) {
         mProgram = program;
+
+        textToSpeech.stop();
+        mExecutor.shutdownNow();
+        mTTSExecutor.shutdownNow();
+
         if (program == null) {
+            // Stop Program
             mCurrentProgramLayout.setVisibility(View.GONE);
             mNoProgramText.setVisibility(View.VISIBLE);
+            textToSpeech.stop();
+            mExecutor.shutdownNow();
+            mTTSExecutor.shutdownNow();
         } else {
+            // Start Program
+            mExecutor = Executors.newSingleThreadExecutor();
+            mTTSExecutor = Executors.newSingleThreadExecutor();
+
             setupViewForProgram();
             startProgram();
         }
+    }
 
-
+    public Program getProgram() {
+        return mProgram;
     }
 
     /**
@@ -181,6 +196,10 @@ public class PlayBarFragment extends Fragment{
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
+            }
+
+            if (mProgram == null) {
+                return;
             }
 
             // Exercises
