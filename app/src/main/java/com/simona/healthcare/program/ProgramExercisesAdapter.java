@@ -1,6 +1,9 @@
 package com.simona.healthcare.program;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +17,9 @@ import android.widget.Toast;
 
 import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;
+import com.simona.healthcare.utils.DatabaseHelper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +71,19 @@ public class ProgramExercisesAdapter extends BaseAdapter {
         holder.setsTextView.setText(exercise.getSets() + " sets,  " + exercise.getRepsPerSet() + " reps.");
         holder.durationTextView.setText("Break : " + exercise.getBreak() + " sec.");
         holder.descriptionTextView.setText(exercise.getDescription());
-        //holder.imageView.setImageDrawable(exercise.getImagePath());
+
+        // Exercise image
+        String imageUri = DatabaseHelper.getInstance(mContext).getImageForExercise(exercise.getId());
+        if (imageUri != null) {
+            Uri uri = Uri.parse(imageUri);
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream(uri));
+                holder.imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         // For Edit Mode - Set selected exercises checked
         for (Exercise e : mSelectedExercises) {

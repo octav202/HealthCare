@@ -2,6 +2,8 @@ package com.simona.healthcare;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,15 +22,18 @@ import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.playing.PlayBarFragment;
 import com.simona.healthcare.program.ProgramsFragment;
 import com.simona.healthcare.settings.SettingsFragment;
+import com.simona.healthcare.utils.DatabaseHelper;
 
-import static com.simona.healthcare.utils.Constants.TAG;
-import static com.simona.healthcare.utils.Constants.EXTRA_KEY_EVENTS;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY;
+import static com.simona.healthcare.utils.Constants.EXTRA_KEY_EVENTS;
+import static com.simona.healthcare.utils.Constants.GALLERY_INTENT;
+import static com.simona.healthcare.utils.Constants.TAG;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Fragment mCurrentFragment;
+    private int mRequestedId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,5 +173,63 @@ public class MainActivity extends AppCompatActivity
         if (mCurrentFragment instanceof EventsFragment) {
             ((EventsFragment) mCurrentFragment).add();
         }
+    }
+
+    /**
+     * Choose image from gallery.
+     * @param id
+     */
+    public void openGallery(int id) {
+        mRequestedId = id;
+        if (Build.VERSION.SDK_INT <19){
+            Intent intent = new Intent();
+            intent.setType("*/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent, GALLERY_INTENT);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            startActivityForResult(intent, GALLERY_INTENT);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK) {
+            Uri imageUri = null;
+            if (Build.VERSION.SDK_INT < 19) {
+                imageUri = data.getData();
+            } else {
+                imageUri = data.getData();
+                final int takeFlags = data.getFlags()
+                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+                try {
+                    getApplicationContext().getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
+
+                    if (DatabaseHelper.getInstance(getApplicationContext()).getImageForExercise(mRequestedId) != null) {
+                        // Update Image
+                        DatabaseHelper.getInstance(getApplicationContext()).updateImageForExerciseId(imageUri.toString(), mRequestedId);
+                    } else {
+                        // Add Image to Database
+                        DatabaseHelper.getInstance(getApplicationContext()).addImageForExerciseId(
+                                imageUri.toString(), mRequestedId);
+                    }
+
+                    if (mCurrentFragment instanceof ExercisesFragment) {
+                        ((ExercisesFragment) mCurrentFragment).updateAdapter();
+                    }
+
+                    mRequestedId = 0;
+                }
+                catch (SecurityException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }

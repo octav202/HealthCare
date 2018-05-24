@@ -1,5 +1,6 @@
 package com.simona.healthcare.exercise;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
 import com.simona.healthcare.utils.DatabaseHelper;
 
@@ -56,6 +58,15 @@ public class ExercisesFragment extends Fragment {
         // Load fetched exercises
         mAdapter = new ExercisesAdapter(mContext, mExercises);
         mListView.setAdapter(mAdapter);
+
+        mAdapter.setCallback(new ExercisesAdapter.ImageCallback() {
+            @Override
+            public void onImageRequested(int id) {
+                // Open Camera/Gallery to pick photo
+                MainActivity activity = (MainActivity) getActivity();
+                activity.openGallery(id);
+            }
+        });
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -236,9 +247,11 @@ public class ExercisesFragment extends Fragment {
     }
 
     /**
-     * Delete Exercise
+     * Called from the activity after an image was stored for an exercise
      */
-    public void delete() {
-
+    public void updateAdapter() {
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }
