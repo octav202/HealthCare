@@ -689,13 +689,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param event
      */
     public boolean addEvent(Event event) {
-        Log.d(TAG, "DB addEvent() " + event);
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
 
+        event.setId(getNextEventId());
+
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, getNextEventId());
+        values.put(KEY_ID, event.getId());
         values.put(KEY_NAME, event.getName());
         values.put(KEY_DESCRIPTION, event.getDescription());
         values.put(KEY_INTERVAL, event.getInterval());
@@ -706,6 +707,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d(TAG, "addEvent() FAILED");
             return false;
         }
+
+        Log.d(TAG, "DB addEvent() " + event);
+
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();

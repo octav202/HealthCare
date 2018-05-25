@@ -33,6 +33,13 @@ public class EventReceiver extends WakefulBroadcastReceiver{
 
         Log.d(TAG, "onReceive() " + event);
 
+        // Go to events when user taps on notification.
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+        notificationIntent.putExtra(EXTRA_KEY, EXTRA_KEY_EVENTS);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
             CharSequence name = event.getName();
@@ -40,19 +47,11 @@ public class EventReceiver extends WakefulBroadcastReceiver{
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             String CHANNEL_ID = event.getName();
 
-
+            // Notification Channel
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
-
-            // Go to events when user taps on notification.
-            Intent notificationIntent = new Intent(context, MainActivity.class);
-            notificationIntent.putExtra(EXTRA_KEY, EXTRA_KEY_EVENTS);
-            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-                    notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_favorite)
@@ -67,7 +66,17 @@ public class EventReceiver extends WakefulBroadcastReceiver{
 
             manager.notify(event.getId(), mBuilder.build());
         } else {
-            // TO DO Notification for SKD < O
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                    .setSmallIcon(R.drawable.ic_favorite)
+                    .setContentTitle(event.getName())
+                    .setContentText(event.getDescription())
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(event.getDescription()))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentIntent(contentIntent).setAutoCancel(true);
+            NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+
+            manager.notify(event.getId(), mBuilder.build());
         }
     }
 }
