@@ -21,6 +21,7 @@ import com.simona.healthcare.event.EventsFragment;
 import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.playing.PlayBarFragment;
 import com.simona.healthcare.program.ProgramsFragment;
+import com.simona.healthcare.recipe.RecipeFragment;
 import com.simona.healthcare.settings.SettingsFragment;
 import com.simona.healthcare.utils.DatabaseHelper;
 
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = EventsFragment.newInstance();
                 break;
             case R.id.nav_recipes:
-                fragment = CategoriesFragment.newInstance(0);
+                fragment = RecipeFragment.newInstance(0);
                 break;
         }
 
@@ -172,6 +173,10 @@ public class MainActivity extends AppCompatActivity
 
         if (mCurrentFragment instanceof EventsFragment) {
             ((EventsFragment) mCurrentFragment).add();
+        }
+
+        if (mCurrentFragment instanceof RecipeFragment) {
+            ((RecipeFragment) mCurrentFragment).add();
         }
     }
 
