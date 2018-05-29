@@ -29,12 +29,20 @@ import static com.simona.healthcare.utils.Constants.EXTRA_KEY;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY_EVENTS;
 import static com.simona.healthcare.utils.Constants.GALLERY_INTENT;
 import static com.simona.healthcare.utils.Constants.TAG;
+import static com.simona.healthcare.utils.Constants.TYPE_ADD;
+import static com.simona.healthcare.utils.Constants.TYPE_EXERCISE;
+import static com.simona.healthcare.utils.Constants.TYPE_RECIPE;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Fragment mCurrentFragment;
+
+    // PhotoPicker
+    // Id of the corresponding object (Exercise, Recipe);
     private int mRequestedId;
+    // Type of the corresponding object (Exercise, Recipe);
+    private int mRequestedType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,11 +189,32 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Choose image from gallery.
+     * Choose image from gallery for an exercise.
      * @param id
      */
-    public void openGallery(int id) {
+    public void openGalleryForExercise(int id) {
         mRequestedId = id;
+        mRequestedType = TYPE_EXERCISE;
+        if (Build.VERSION.SDK_INT <19){
+            Intent intent = new Intent();
+            intent.setType("*/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent, GALLERY_INTENT);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            startActivityForResult(intent, GALLERY_INTENT);
+        }
+    }
+
+    /**
+     * Choose image from gallery for a recipe.
+     * @param id
+     */
+    public void openGalleryForRecipe(int id) {
+        mRequestedId = id;
+        mRequestedType = TYPE_RECIPE;
         if (Build.VERSION.SDK_INT <19){
             Intent intent = new Intent();
             intent.setType("*/*");
@@ -215,20 +244,41 @@ public class MainActivity extends AppCompatActivity
                 try {
                     getApplicationContext().getContentResolver().takePersistableUriPermission(imageUri, takeFlags);
 
-                    if (DatabaseHelper.getInstance(getApplicationContext()).getImageForExercise(mRequestedId) != null) {
-                        // Update Image
-                        DatabaseHelper.getInstance(getApplicationContext()).updateImageForExerciseId(imageUri.toString(), mRequestedId);
-                    } else {
-                        // Add Image to Database
-                        DatabaseHelper.getInstance(getApplicationContext()).addImageForExerciseId(
-                                imageUri.toString(), mRequestedId);
+                    switch (mRequestedType) {
+                        case TYPE_EXERCISE:
+                            if (DatabaseHelper.getInstance(getApplicationContext()).getImageForExercise(mRequestedId) != null) {
+                                // Update Image
+                                DatabaseHelper.getInstance(getApplicationContext()).updateImageForExerciseId(imageUri.toString(), mRequestedId);
+                            } else {
+                                // Add Image to Database
+                                DatabaseHelper.getInstance(getApplicationContext()).addImageForExerciseId(
+                                        imageUri.toString(), mRequestedId);
+                            }
+                            break;
+
+                        case TYPE_RECIPE:
+                            // Image was requested by the EditRecipeDialog - update dialog image
+                            if (mRequestedId == TYPE_ADD) {
+                                ((RecipeFragment) mCurrentFragment).setDialogImageUri(imageUri);
+                            }
+                            break;
+                        default:
+                            break;
                     }
 
+
+
+                    // Refresh adapter;
                     if (mCurrentFragment instanceof ExercisesFragment) {
                         ((ExercisesFragment) mCurrentFragment).updateAdapter();
                     }
 
+                    if (mCurrentFragment instanceof RecipeFragment) {
+                        ((RecipeFragment) mCurrentFragment).updateAdapter();
+                    }
+
                     mRequestedId = 0;
+                    mRequestedType = 0;
                 }
                 catch (SecurityException e){
                     e.printStackTrace();

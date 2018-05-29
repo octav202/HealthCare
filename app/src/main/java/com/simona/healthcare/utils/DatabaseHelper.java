@@ -11,6 +11,7 @@ import com.simona.healthcare.event.Event;
 import com.simona.healthcare.event.EventManager;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
+import com.simona.healthcare.recipe.Recipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,31 +38,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_PROGRAMS_EXERCISES = "PROGRAMS_EXERCISES";
     private static final String TABLE_PROGRAMS_DAYS = "PROGRAMS_DAYS";
     private static final String TABLE_EVENTS = "EVENTS";
-
-    private static final String TABLE_CATEGORIES = "CATEGORIES";
     private static final String TABLE_RECIPES = "RECIPES";
 
-    // TABLE_EXERCISES Columns
+    // Columns common for several tables
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
+    private static final String KEY_DESCRIPTION = "description";
+    private static final String KEY_IMAGE_URI = "image_uri";
+
+    // TABLE_EXERCISES additional Columns
     private static final String KEY_SETS = "sets";
     private static final String KEY_REPS = "reps";
     private static final String KEY_BREAK_DURATION = "break_duration";
-    private static final String KEY_DESCRIPTION = "description";
 
-    // TABLE_EXERCISES_IMAGES Columns
-    private static final String KEY_IMAGE_URI = "image_uri";
-
-    // TABLE_PROGRAMS_EXERCISES Columns - used for mapping program - exercise
+    // TABLE_PROGRAMS_EXERCISES additional Columns - used for mapping program - exercise
     private static final String KEY_PROGRAM_ID = "program_id";
     private static final String KEY_EXERCISE_ID = "exercise_id";
 
-    // TABLE_PROGRAMS_DAYS Columns - used for mapping program - days
+    // TABLE_PROGRAMS_DAYS additional Columns - used for mapping program - days
     private static final String KEY_DAY_ID = "day_id";
 
-    // TABLE_EVENTS Columns
+    // TABLE_EVENTS additional Columns
     private static final String KEY_INTERVAL = "interval";
     private static final String KEY_ACTIVE = "active";
+
+    // TABLE_RECEIPT additional Columns
+    private static final String KEY_TIME = "time";
 
     public static DatabaseHelper getInstance(Context context){
         if (sInstance == null) {
@@ -123,12 +125,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_INTERVAL + " INTEGER,"
                 + KEY_ACTIVE + " INTEGER "+ ")";
         db.execSQL(CREATE_EVENTS_TABLE);
+
+        // Create EVENTS Table
+        String CREATE_RECIPE_TABLE = "CREATE TABLE " + TABLE_RECIPES + "("
+                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_NAME + " TEXT,"
+                + KEY_TIME + " TEXT,"
+                + KEY_DESCRIPTION + " INTEGER,"
+                + KEY_IMAGE_URI + " TEXT "+ ")";
+        db.execSQL(CREATE_RECIPE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISES);
+        // Drop tables and recreate them
 
         // Create tables again
         onCreate(db);
@@ -141,7 +151,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Add Exercise
-     * @param ex
+     * @param ex exercise
      */
     public boolean addExercise(Exercise ex) {
         Log.d(TAG, "DB addExercise() " + ex);
@@ -171,7 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Update Exercise
-     * @param ex
+     * @param ex exercise
      */
     public boolean updateExercise(Exercise ex) {
         Log.d(TAG, "DB updateExercise() " + ex);
@@ -191,7 +201,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[] { String.valueOf(ex.getId()) });
 
         if (status < 0) {
-            Log.d(TAG, "addExercise() FAILED");
+            Log.d(TAG, "updateExercise() FAILED");
             return false;
         }
         db.setTransactionSuccessful();
@@ -203,7 +213,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Delete Exercise
-     * @param ex
+     * @param ex exercise
      */
     public boolean deleteExercise(Exercise ex) {
         Log.d(TAG, "DB deleteExercise() " + ex);
@@ -234,8 +244,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Get Exercises for Id
-     * @param id
-     * @return
+     * @param id exerciseId
+     * @return Exercise Object.
      */
     public Exercise getExerciseForId(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -257,6 +267,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ex.setBreak(cursor.getInt(4));
         ex.setDescription(cursor.getString(5));
 
+        cursor.close();
         return ex;
     }
 
@@ -284,13 +295,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Log.d(TAG, " getExercises - No exercises Found");
         }
+        cursor.close();
+
         return exercises;
     }
 
     /**
      * Check if exercise is used by any program before deleting it.
-     * @param ex
-     * @return
+     * @param ex Exercise
+     * @return true/false.
      */
     public boolean canDeleteExercise(Exercise ex) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -305,13 +318,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // Programs found using this exercise. DO NOT delete it.
             return false;
         }
+        cursor.close();
         return true;
     }
 
     /**
      * Get the next valid exercise id.
      * Used when adding a new exercise.
-     * @return id
+     * @return id - next valid id to be added
      */
     private int getNextExerciseId() {
         String selectQuery = "SELECT MAX(id) FROM " + TABLE_EXERCISES;
@@ -327,7 +341,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 nextId = 1;
             }
         }
-
+        cursor.close();
         Log.d(TAG, " getNextExerciseId() " + nextId);
         return nextId;
     }
@@ -338,7 +352,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Add Program
-     * @param prog
+     * @param prog Program
      */
     public boolean addProgram(Program prog) {
         Log.d(TAG, "DB addProgram() " + prog);
@@ -381,7 +395,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Get Program for Id
      * @param id
-     * @return
+     * @return Program
      */
     public Program getProgramForId(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -398,7 +412,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Program prog = new Program();
         prog.setId(cursor.getInt(0));
         prog.setName(cursor.getString(1));
-
+        cursor.close();
         return prog;
     }
 
@@ -424,13 +438,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Log.d(TAG, " getPrograms - No programs Found");
         }
+        cursor.close();
         return programs;
     }
 
     /**
      * Get the next valid program id.
      * Used when adding a new program.
-     * @return id
+     * @return id to be added
      */
     private int getNextProgramId() {
         String selectQuery = "SELECT MAX(id) FROM " + TABLE_PROGRAMS;
@@ -446,14 +461,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 nextId = 1;
             }
         }
-
+        cursor.close();
         Log.d(TAG, " getNextProgramId() " + nextId);
         return nextId;
     }
 
     /**
      * Delete Program
-     * @param program
+     * @param program Program
      */
     public boolean deleteProgram(Program program) {
         Log.d(TAG, "DB deleteProgram() " + program);
@@ -515,8 +530,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Get Exercises for Program Id
-     * @param id
-     * @return
+     * @param id programId.
+     * @return list of exercise for a specific program.
      */
     public List<Exercise> getExercisesForProgramId(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -538,13 +553,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Log.d(TAG, " getExercisesForProgramId - Not Found for program " + id);
         }
+        cursor.close();
 
         return list;
     }
 
     /**
      * Delete Exercises for Program
-     * @param program
+     * @param program Program
      */
     public boolean deleteExercisesForProgram(Program program) {
         Log.d(TAG, "DB deleteExercisesForProgram() " + program);
@@ -629,9 +645,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Get Programs For Dau
-     * @param id
-     * @return
+     * Get Programs For Day
+     * @param id dayId.
+     * @return list of programs
      */
     public List<Program> getProgramsForDay(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -653,13 +669,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Log.d(TAG, " getProgramsForDays() - Not Found for program " + id);
         }
-
+        cursor.close();
         return list;
     }
 
     /**
      * Delete Days for Program
-     * @param program
+     * @param program Program
      */
     public boolean deleteDaysForProgram(Program program) {
         Log.d(TAG, "DB deleteDaysForProgram() " + program);
@@ -686,7 +702,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Add Event
-     * @param event
+     * @param event Event
      */
     public boolean addEvent(Event event) {
 
@@ -724,7 +740,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Update Event
-     * @param event
+     * @param event Event
      */
     public boolean updateEvent(Event event) {
         Log.d(TAG, "DB updateEvent() " + event);
@@ -764,7 +780,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Delete Event
-     * @param event
+     * @param event Event
      */
     public boolean deleteEvent(Event event) {
         Log.d(TAG, "DB deleteEvent() " + event);
@@ -789,8 +805,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Get Event for Id
-     * @param id
-     * @return
+     * @param id eventId
+     * @return EventObject
      */
     public Event getEventForId(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -811,6 +827,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         event.setInterval(cursor.getInt(3));
         event.setActive(cursor.getInt(4) == 1 ? true : false);
 
+        cursor.close();
         return event;
     }
 
@@ -837,13 +854,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             Log.d(TAG, " getEvents - No events Found");
         }
+        cursor.close();
         return events;
     }
 
     /**
      * Get the next valid event id.
      * Used when adding a new event.
-     * @return id
+     * @return id next valid id
      */
     private int getNextEventId() {
         String selectQuery = "SELECT MAX(id) FROM " + TABLE_EVENTS;
@@ -859,6 +877,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 nextId = 1;
             }
         }
+        cursor.close();
 
         Log.d(TAG, " getNextEventId() " + nextId);
         return nextId;
@@ -870,9 +889,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Add image path or exercise id.
-     * @param imageUri
-     * @param id
-     * @return
+     * @param imageUri Uri of Image.
+     * @param id Id of Exercise.
+     * @return true/false.
      */
     public boolean addImageForExerciseId(String imageUri, int id) {
         Log.d(TAG, "DB addImageForExerciseId() " + id + ", " + imageUri);
@@ -898,8 +917,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Return image path for exercise id.
      *
-     * @param id
-     * @return
+     * @param id exerciseId
+     * @return Uri of the image.
      */
     public String getImageForExercise(int id) {
         Log.d(TAG, "DB getImageForExercise() " + id);
@@ -919,13 +938,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.getCount() !=0) {
             imagePath = cursor.getString(0);
         }
+        cursor.close();
         Log.d(TAG, "Image " + imagePath);
         return imagePath;
     }
 
     /**
      * Delete Image for Exercise
-     * @param exercise
+     * @param exercise Exercise
      */
     public boolean deleteImageForExercise(Exercise exercise) {
         Log.d(TAG, "DB deleteImageForExercise() " + exercise.getId());
@@ -948,8 +968,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Update Image for Exercise
-     * @param imageUri
-     * @param id
+     * @param imageUri Uri of the image
+     * @param id id of the exercise.
      */
     public boolean updateImageForExerciseId(String imageUri, int id) {
         Log.d(TAG, "DB updateImageForExerciseId() " + id + ", " + imageUri);
@@ -973,6 +993,174 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return true;
+    }
+
+    // ------------------------------------------------------
+    // ____________________ RECIPES _________________________
+    // ______________________________________________________
+
+    /**
+     * Add Recipe
+     * @param recipe Recipe.
+     */
+    public boolean addRecipe(Recipe recipe) {
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        recipe.setId(getNextRecipeId());
+        Log.d(TAG, "DB addRecipe() " + recipe);
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, recipe.getId());
+        values.put(KEY_NAME, recipe.getName());
+        values.put(KEY_TIME, recipe.getTime());
+        values.put(KEY_DESCRIPTION, recipe.getDescription());
+        values.put(KEY_IMAGE_URI, recipe.getImagePath());
+        long status = db.insertOrThrow(TABLE_RECIPES, null, values);
+
+        if (status < 0) {
+            Log.d(TAG, "addRecipe() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return true;
+    }
+
+    /**
+     * Update Recipe
+     * @param recipe Recipe.
+     */
+    public boolean updateRecipe(Recipe recipe) {
+        Log.d(TAG, "DB updateRecipe() " + recipe);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, recipe.getId());
+        values.put(KEY_NAME, recipe.getName());
+        values.put(KEY_TIME, recipe.getTime());
+        values.put(KEY_DESCRIPTION, recipe.getDescription());
+        values.put(KEY_IMAGE_URI, recipe.getImagePath());
+        long status = db.update(TABLE_RECIPES, values,
+                KEY_ID + " = ?",
+                new String[] { String.valueOf(recipe.getId()) });
+
+        if (status < 0) {
+            Log.d(TAG, "updateRecipe() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return true;
+    }
+
+    /**
+     * Delete Recipe
+     * @param recipe Recipe.
+     */
+    public boolean deleteRecipe(Recipe recipe) {
+        Log.d(TAG, "DB deleteRecipe() " + recipe);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        long status = db.delete(TABLE_RECIPES, KEY_ID + " = ?",
+                new String[] { String.valueOf(recipe.getId()) });
+
+        if (status < 0) {
+            Log.d(TAG, "deleteRecipe() FAILED");
+            return false;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return true;
+    }
+
+    /**
+     * Get Recipe for Id.
+     * @param id recipeId.
+     * @return Recipe object.
+     */
+    public Recipe getRecipeForId(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_RECIPES,
+                new String[]{KEY_ID, KEY_NAME, KEY_TIME, KEY_DESCRIPTION, KEY_IMAGE_URI},
+                KEY_ID + "=?",
+                new String[]{String.valueOf(id)},
+                null, null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        Recipe r = new Recipe();
+        r.setId(cursor.getInt(0));
+        r.setName(cursor.getString(1));
+        r.setTime(cursor.getString(2));
+        r.setDescription(cursor.getString(3));
+        r.setImagePath(cursor.getString(4));
+        cursor.close();
+        return r;
+    }
+
+    /**
+     * Get all recipes.
+     * @return list of recipes.
+     */
+    public List<Recipe> getRecipes() {
+        List<Recipe> recipes = new ArrayList<Recipe>();
+        String selectQuery = "SELECT  * FROM " + TABLE_RECIPES;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Recipe r = new Recipe();
+                r.setId(cursor.getInt(0));
+                r.setName(cursor.getString(1));
+                r.setTime(cursor.getString(2));
+                r.setDescription(cursor.getString(3));
+                r.setImagePath(cursor.getString(4));
+                recipes.add(r);
+            } while (cursor.moveToNext());
+        } else {
+            Log.d(TAG, " getRecipes - No exercises Found");
+        }
+        cursor.close();
+        return recipes;
+    }
+
+    /**
+     * Get the next valid recipe id.
+     * Used when adding a new recipe.
+     * @return id next valid Id
+     */
+    private int getNextRecipeId() {
+        String selectQuery = "SELECT MAX(id) FROM " + TABLE_RECIPES;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        int nextId = 1;
+        if (cursor.moveToFirst()) {
+            String currentId = cursor.getString(0);
+            if (currentId != null) {
+                nextId = Integer.parseInt(currentId) + 1;
+            } else {
+                nextId = 1;
+            }
+        }
+        cursor.close();
+        Log.d(TAG, " getNextRecipeId() " + nextId);
+        return nextId;
     }
 
 }

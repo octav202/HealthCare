@@ -11,4 +11,10 @@ public class Constants {
     // Settings
     public static final String PREFS_PROGRAM_TTS_KEY = "program_tts";
     public static final String PREFS_REPS_TTS_KEY = "reps_tts";
+
+    // PhotoPicker
+    public static final int TYPE_EXERCISE = 100;
+    public static final int TYPE_RECIPE = 200;
+    public static final int TYPE_ADD = 300;
+
 }

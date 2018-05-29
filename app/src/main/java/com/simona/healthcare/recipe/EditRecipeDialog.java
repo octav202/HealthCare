@@ -2,6 +2,11 @@ package com.simona.healthcare.recipe;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +15,9 @@ import android.widget.Toast;
 
 import com.simona.healthcare.R;
 import com.simona.healthcare.utils.DatabaseHelper;
+import static com.simona.healthcare.utils.Constants.TAG;
+
+import java.io.IOException;
 
 public class EditRecipeDialog extends Dialog {
 
@@ -40,6 +48,15 @@ public class EditRecipeDialog extends Dialog {
         mOkBtn = findViewById(R.id.okButton);
         mDeleteButton = findViewById(R.id.deleteButton);
 
+        mImageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mCallback.onAddRecipeImage();
+                }
+                return true;
+            }
+        });
 
         mOkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,21 +71,9 @@ public class EditRecipeDialog extends Dialog {
                     return;
                 }
 
-                // Edit Recipe
-                if (recipeToEdit != null) {
-                    // This is edit mode - delete program and add it again with new values
-                    if (DatabaseHelper.getInstance(mContext).deleteRecipe(recipeToEdit)) {
-                        // Refresh List
-                        mCallback.onRecipeEditDone();
-                    } else {
-                        Toast.makeText(mContext, "Update Program Failed!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-
                 Recipe recipe = new Recipe();
                 if (recipeToEdit !=null) {
-                    // Edit Program - keep the same id
+                    // Edit Recipe - keep the same id
                     recipe.setId(recipeToEdit.getId());
                 }
                 recipe.setName(name);
@@ -78,12 +83,19 @@ public class EditRecipeDialog extends Dialog {
                     recipe.setImagePath(mImagePath);
                 }
 
-                if (DatabaseHelper.getInstance(context).addRecipe(recipe)) {
-                    mCallback.onRecipeEditDone();
+                if (recipeToEdit != null) {
+                    if (DatabaseHelper.getInstance(context).updateRecipe(recipe)) {
+                        mCallback.onRecipeEditDone();
+                    } else {
+                        Toast.makeText(context, "Update Recipe Failed!", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(context, "Add Recipe Failed!", Toast.LENGTH_SHORT).show();
+                    if (DatabaseHelper.getInstance(context).addRecipe(recipe)) {
+                        mCallback.onRecipeEditDone();
+                    } else {
+                        Toast.makeText(context, "Add Recipe Failed!", Toast.LENGTH_SHORT).show();
+                    }
                 }
-
                 dismiss();
             }
         });
@@ -116,13 +128,34 @@ public class EditRecipeDialog extends Dialog {
             mDescriptionText.setText(recipeToEdit.getDescription());
             mTimeText.setText(recipeToEdit.getTime());
             if (recipeToEdit.getImagePath() != null) {
-                // TODO set image;
+                mImagePath = recipeToEdit.getImagePath();
+                Uri imageUri = Uri.parse(recipeToEdit.getImagePath());
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream(imageUri));
+                    mImageView.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             mDeleteButton.setVisibility(View.INVISIBLE);
         }
     }
+
+    public void setImageUri(Uri imageUri) {
+        if (imageUri != null) {
+            mImagePath = imageUri.toString();
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream(imageUri));
+                mImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public interface AddRecipeCallback {
         void onRecipeEditDone();
+        void onAddRecipeImage();
     }
 }

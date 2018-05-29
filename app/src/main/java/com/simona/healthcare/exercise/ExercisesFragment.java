@@ -64,7 +64,7 @@ public class ExercisesFragment extends Fragment {
             public void onImageRequested(int id) {
                 // Open Camera/Gallery to pick photo
                 MainActivity activity = (MainActivity) getActivity();
-                activity.openGallery(id);
+                activity.openGalleryForExercise(id);
             }
         });
 

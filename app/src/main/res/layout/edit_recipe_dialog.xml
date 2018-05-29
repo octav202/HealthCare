@@ -2,65 +2,62 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <!-- Exercise image -->
     <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:id="@+id/imageView"
         android:background="@android:color/transparent"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
         android:src="@drawable/ic_photo"/>
 
     <!-- Name -->
     <EditText
         android:id="@+id/nameTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/imageView"
-        android:textColor="@android:color/white"
-        android:textSize="17dp"
-        android:textStyle="bold"
+        android:layout_below="@+id/imageView"
+        android:textSize="16dp"
+        android:hint="@string/name"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="7dp"/>
 
     <!-- Time -->
     <EditText
         android:id="@+id/timeTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/nameTextView"
-        android:layout_toEndOf="@+id/imageView"
         android:layout_marginTop="4dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="5dp"
+        android:hint="@string/time"
         android:textColor="@android:color/black"
-        android:textSize="13dp" />
+        android:textSize="16dp" />
 
     <!-- Description -->
     <EditText
         android:id="@+id/descriptionTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/timeTextView"
         android:layout_marginTop="4dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="5dp"
-        android:layout_toEndOf="@+id/imageView"
+        android:hint="@string/description"
         android:textColor="@android:color/black"
-        android:textSize="13dp" />
+        android:textSize="16dp" />
 
     <LinearLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/descriptionTextView"
         android:orientation="horizontal"
         android:weightSum="3"
         android:layout_marginTop="10dp">

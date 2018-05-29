@@ -29,6 +29,8 @@
     <string name="break_text">Break</string>
     <string name="active">Active</string>
 
+    <string name="time">Time</string>
+
     <!-- Text To Speech -->
     <string name="starting_program">Starting Program</string>
     <string name="end_program">Program Over</string>

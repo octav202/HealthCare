@@ -1,21 +1,15 @@
 package com.simona.healthcare.recipe;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
@@ -25,13 +19,16 @@ import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.List;
 
+import static com.simona.healthcare.utils.Constants.TYPE_ADD;
+
 public class RecipeFragment extends Fragment {
 
     private static final String TAG = "HEALTH_";
 
     private ListView mListView;
-    private ExercisesAdapter mAdapter;
+    private RecipesAdapter mAdapter;
     private Context mContext;
+    private EditRecipeDialog mDialog;
 
     public static RecipeFragment newInstance(int selectedId) {
         RecipeFragment fragment = new RecipeFragment();
@@ -46,28 +43,19 @@ public class RecipeFragment extends Fragment {
         View view = inflater.inflate(R.layout.recipes_fragment, container, false);
         mListView = view.findViewById(R.id.recipesList);
 
-        // Get all exercises from database
-        List<Exercise> mExercises = DatabaseHelper.getInstance(mContext).getExercises();
+        // Get all recipes rom database
+        List<Recipe> recipes = DatabaseHelper.getInstance(mContext).getRecipes();
 
-        // Load fetched exercises
-        mAdapter = new ExercisesAdapter(mContext, mExercises);
+        // Load fetched recipes
+        mAdapter = new RecipesAdapter(mContext, recipes);
         mListView.setAdapter(mAdapter);
-
-        mAdapter.setCallback(new ExercisesAdapter.ImageCallback() {
-            @Override
-            public void onImageRequested(int id) {
-                // Open Camera/Gallery to pick photo
-                MainActivity activity = (MainActivity) getActivity();
-                activity.openGallery(id);
-            }
-        });
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mAdapter != null) {
-                    Exercise ex = (Exercise) mAdapter.getItem(position);
-                    edit(ex);
+                    Recipe r = (Recipe) mAdapter.getItem(position);
+                    edit(r);
                 }
             }
         });
@@ -75,10 +63,64 @@ public class RecipeFragment extends Fragment {
     }
 
     /**
-     * Add Exercise
+     * Add Recipe
      */
     public void add() {
 
+        if (mDialog != null) {
+            mDialog.dismiss();
+            mDialog = null;
+        }
+
+        mDialog = new EditRecipeDialog(getActivity(), new EditRecipeDialog.AddRecipeCallback() {
+            @Override
+            public void onRecipeEditDone() {
+                // Program added, update list
+                List<Recipe> recipes = DatabaseHelper.getInstance(mContext).getRecipes();
+                mAdapter.setData(recipes);
+            }
+
+            @Override
+            public void onAddRecipeImage() {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.openGalleryForRecipe(TYPE_ADD);
+            }
+        }, null);
+        mDialog.show();
+    }
+
+    /**
+     * Edit Recipe
+     */
+    public void edit(Recipe recipe) {
+
+        if (mDialog != null) {
+            mDialog.dismiss();
+            mDialog = null;
+        }
+
+        mDialog = new EditRecipeDialog(getActivity(), new EditRecipeDialog.AddRecipeCallback() {
+            @Override
+            public void onRecipeEditDone() {
+                // Program added, update list
+                List<Recipe> recipes = DatabaseHelper.getInstance(mContext).getRecipes();
+                mAdapter.setData(recipes);
+            }
+
+            @Override
+            public void onAddRecipeImage() {
+                MainActivity activity = (MainActivity) getActivity();
+                activity.openGalleryForRecipe(TYPE_ADD);
+            }
+        }, recipe);
+        mDialog.show();
+    }
+
+
+    public void setDialogImageUri(Uri imageUri) {
+        if (mDialog != null) {
+            mDialog.setImageUri(imageUri);
+        }
     }
 
     /**

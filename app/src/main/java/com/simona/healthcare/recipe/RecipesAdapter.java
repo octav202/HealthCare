@@ -13,8 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.simona.healthcare.R;
-import com.simona.healthcare.exercise.Exercise;
-import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,15 +23,10 @@ public class RecipesAdapter extends BaseAdapter {
 
     private List<Recipe> mRecipes;
     private Context mContext;
-    private ImageCallback mCallback;
 
     public RecipesAdapter(Context c, List<Recipe> recipes) {
         mContext = c;
         mRecipes = recipes;
-    }
-
-    public void setCallback(ImageCallback callback) {
-        mCallback = callback;
     }
 
     public int getCount() {
@@ -53,7 +46,7 @@ public class RecipesAdapter extends BaseAdapter {
         FileHolder holder = new FileHolder();
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.exercise_item, null);
+            v = inflater.inflate(R.layout.recipe_item, null);
             holder.nameTextView = v.findViewById(R.id.nameTextView);
             holder.timeTextView = v.findViewById(R.id.timeTextView);
             holder.descriptionTextView = v.findViewById(R.id.descriptionTextView);
@@ -81,18 +74,6 @@ public class RecipesAdapter extends BaseAdapter {
             }
         }
 
-        holder.imageView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (mCallback != null) {
-                        mCallback.onImageRequested(exercise.getId());
-                    }
-                }
-                return true;
-            }
-        });
-
         return v;
     }
 
@@ -107,10 +88,6 @@ public class RecipesAdapter extends BaseAdapter {
         TextView timeTextView;
         TextView descriptionTextView;
         ImageView imageView;
-    }
-
-    public interface ImageCallback {
-        void onImageRequested(int id);
     }
 
 }
