@@ -15,6 +15,4 @@ public class Constants {
     // PhotoPicker
     public static final int TYPE_EXERCISE = 100;
     public static final int TYPE_RECIPE = 200;
-    public static final int TYPE_ADD = 300;
-
 }

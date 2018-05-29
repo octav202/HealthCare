@@ -13,13 +13,11 @@ import android.widget.ListView;
 
 import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
-import com.simona.healthcare.exercise.Exercise;
-import com.simona.healthcare.exercise.ExercisesAdapter;
 import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.List;
 
-import static com.simona.healthcare.utils.Constants.TYPE_ADD;
+import static com.simona.healthcare.utils.Constants.TYPE_RECIPE;
 
 public class RecipeFragment extends Fragment {
 
@@ -83,7 +81,7 @@ public class RecipeFragment extends Fragment {
             @Override
             public void onAddRecipeImage() {
                 MainActivity activity = (MainActivity) getActivity();
-                activity.openGalleryForRecipe(TYPE_ADD);
+                activity.openGallery(TYPE_RECIPE);
             }
         }, null);
         mDialog.show();
@@ -102,7 +100,6 @@ public class RecipeFragment extends Fragment {
         mDialog = new EditRecipeDialog(getActivity(), new EditRecipeDialog.AddRecipeCallback() {
             @Override
             public void onRecipeEditDone() {
-                // Program added, update list
                 List<Recipe> recipes = DatabaseHelper.getInstance(mContext).getRecipes();
                 mAdapter.setData(recipes);
             }
@@ -110,7 +107,7 @@ public class RecipeFragment extends Fragment {
             @Override
             public void onAddRecipeImage() {
                 MainActivity activity = (MainActivity) getActivity();
-                activity.openGalleryForRecipe(TYPE_ADD);
+                activity.openGallery(TYPE_RECIPE);
             }
         }, recipe);
         mDialog.show();

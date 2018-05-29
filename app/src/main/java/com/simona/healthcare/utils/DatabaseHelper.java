@@ -33,7 +33,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Table Names
     private static final String TABLE_EXERCISES = "EXERCISES";
-    private static final String TABLE_EXERCISE_IMAGES = "EXERCISE_IMAGES";
     private static final String TABLE_PROGRAMS = "PROGRAMS";
     private static final String TABLE_PROGRAMS_EXERCISES = "PROGRAMS_EXERCISES";
     private static final String TABLE_PROGRAMS_DAYS = "PROGRAMS_DAYS";
@@ -90,6 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_SETS + " INTEGER,"
                 + KEY_REPS + " INTEGER,"
                 + KEY_BREAK_DURATION + " INTEGER,"
+                + KEY_IMAGE_URI + " TEXT,"
                 + KEY_DESCRIPTION + " TEXT" + ")";
         db.execSQL(CREATE_EXERCISES_TABLE);
 
@@ -104,12 +104,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_PROGRAM_ID + " INTEGER ,"
                 + KEY_EXERCISE_ID + " INTEGER" + ")";
         db.execSQL(CREATE_PROGRAMS_EXERCISE_TABLE);
-
-        // Create EXERCISE_IMAGES Table.
-        String CREATE_EXERCISE_IMAGES = "CREATE TABLE " + TABLE_EXERCISE_IMAGES + "("
-                + KEY_EXERCISE_ID + " INTEGER ,"
-                + KEY_IMAGE_URI + " TEXT" + ")";
-        db.execSQL(CREATE_EXERCISE_IMAGES);
 
         // Create PROGRAMS_DAYS Table.
         String CREATE_PROGRAMS_DAYS_TABLE = "CREATE TABLE " + TABLE_PROGRAMS_DAYS + "("
@@ -165,6 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SETS, ex.getSets());
         values.put(KEY_REPS, ex.getRepsPerSet());
         values.put(KEY_BREAK_DURATION, ex.getBreak());
+        values.put(KEY_IMAGE_URI, ex.getImagePath());
         values.put(KEY_DESCRIPTION, ex.getDescription());
         long status = db.insertOrThrow(TABLE_EXERCISES, null, values);
 
@@ -195,6 +190,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_SETS, ex.getSets());
         values.put(KEY_REPS, ex.getRepsPerSet());
         values.put(KEY_BREAK_DURATION, ex.getBreak());
+        values.put(KEY_IMAGE_URI, ex.getImagePath());
         values.put(KEY_DESCRIPTION, ex.getDescription());
         long status = db.update(TABLE_EXERCISES, values,
                 KEY_ID + " = ?",
@@ -235,10 +231,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();
-
-        // Delete Image for this exercise.
-        deleteImageForExercise(ex);
-
         return true;
     }
 
@@ -251,7 +243,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_EXERCISES,
-                new String[]{KEY_ID, KEY_NAME, KEY_SETS, KEY_REPS, KEY_BREAK_DURATION, KEY_DESCRIPTION},
+                new String[]{KEY_ID, KEY_NAME, KEY_SETS, KEY_REPS, KEY_BREAK_DURATION, KEY_IMAGE_URI, KEY_DESCRIPTION},
                 KEY_ID + "=?",
                 new String[]{String.valueOf(id)},
                 null, null, null, null);
@@ -265,7 +257,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ex.setSets(cursor.getInt(2));
         ex.setRepsPerSet(cursor.getInt(3));
         ex.setBreak(cursor.getInt(4));
-        ex.setDescription(cursor.getString(5));
+        ex.setImagePath(cursor.getString(5));
+        ex.setDescription(cursor.getString(6));
 
         cursor.close();
         return ex;
@@ -289,7 +282,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ex.setSets(cursor.getInt(2));
                 ex.setRepsPerSet(cursor.getInt(3));
                 ex.setBreak(cursor.getInt(4));
-                ex.setDescription(cursor.getString(5));
+                ex.setImagePath(cursor.getString(5));
+                ex.setDescription(cursor.getString(6));
+
                 exercises.add(ex);
             } while (cursor.moveToNext());
         } else {
@@ -881,118 +876,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Log.d(TAG, " getNextEventId() " + nextId);
         return nextId;
-    }
-
-    // ---------------------------------------------------------------
-    // ____________________ EXERCISE IMAGES __________________________
-    // _______________________________________________________________
-
-    /**
-     * Add image path or exercise id.
-     * @param imageUri Uri of Image.
-     * @param id Id of Exercise.
-     * @return true/false.
-     */
-    public boolean addImageForExerciseId(String imageUri, int id) {
-        Log.d(TAG, "DB addImageForExerciseId() " + id + ", " + imageUri);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.beginTransaction();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_EXERCISE_ID, id);
-        values.put(KEY_IMAGE_URI, imageUri);
-        long status = db.insertOrThrow(TABLE_EXERCISE_IMAGES, null, values);
-
-        if (status < 0) {
-            Log.d(TAG, "addImageForExerciseId() FAILED");
-            return false;
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        db.close();
-        return true;
-    }
-
-    /**
-     * Return image path for exercise id.
-     *
-     * @param id exerciseId
-     * @return Uri of the image.
-     */
-    public String getImageForExercise(int id) {
-        Log.d(TAG, "DB getImageForExercise() " + id);
-        String imagePath = null;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_EXERCISE_IMAGES,
-                new String[]{KEY_IMAGE_URI},
-                KEY_EXERCISE_ID + "=?",
-                new String[]{String.valueOf(id)},
-                null, null, null, null);
-
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
-
-        if (cursor.getCount() !=0) {
-            imagePath = cursor.getString(0);
-        }
-        cursor.close();
-        Log.d(TAG, "Image " + imagePath);
-        return imagePath;
-    }
-
-    /**
-     * Delete Image for Exercise
-     * @param exercise Exercise
-     */
-    public boolean deleteImageForExercise(Exercise exercise) {
-        Log.d(TAG, "DB deleteImageForExercise() " + exercise.getId());
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.beginTransaction();
-
-        long status = db.delete(TABLE_EXERCISE_IMAGES, KEY_EXERCISE_ID + " = ?",
-                new String[] { String.valueOf(exercise.getId()) });
-
-        if (status < 0) {
-            Log.d(TAG, "deleteImageForExercise() FAILED");
-            return false;
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        db.close();
-        return true;
-    }
-
-    /**
-     * Update Image for Exercise
-     * @param imageUri Uri of the image
-     * @param id id of the exercise.
-     */
-    public boolean updateImageForExerciseId(String imageUri, int id) {
-        Log.d(TAG, "DB updateImageForExerciseId() " + id + ", " + imageUri);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.beginTransaction();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_EXERCISE_ID, id);
-        values.put(KEY_IMAGE_URI, imageUri);
-        long status = db.update(TABLE_EXERCISE_IMAGES, values,
-                KEY_EXERCISE_ID + " = ?",
-                new String[]{String.valueOf(id)});
-
-        if (status < 0) {
-            Log.d(TAG, "updateImageForExerciseId() FAILED");
-            return false;
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        db.close();
-
-        return true;
     }
 
     // ------------------------------------------------------

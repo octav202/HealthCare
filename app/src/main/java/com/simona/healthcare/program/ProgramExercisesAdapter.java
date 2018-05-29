@@ -73,9 +73,8 @@ public class ProgramExercisesAdapter extends BaseAdapter {
         holder.descriptionTextView.setText(exercise.getDescription());
 
         // Exercise image
-        String imageUri = DatabaseHelper.getInstance(mContext).getImageForExercise(exercise.getId());
-        if (imageUri != null) {
-            Uri uri = Uri.parse(imageUri);
+        if (exercise.getImagePath() != null) {
+            Uri uri = Uri.parse(exercise.getImagePath() );
             try {
                 Bitmap bitmap = BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream(uri));
                 holder.imageView.setImageBitmap(bitmap);

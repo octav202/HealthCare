@@ -3,15 +3,11 @@ package com.simona.healthcare.exercise;
 public class Exercise {
     private int mId;
     private String mName;
-    private String mDescription;
-
-    // Number of sets
     private int mSets;
-
-    //Number of repetitions per set - ex. 3 sets of 20 reps
     private int mRepsPerSet;
-    // Break between sets - ex. 30sec between sets
     private int mBreak;
+    private String mDescription;
+    private String mImagePath;
 
     public Exercise() {
         this.mId = 0;
@@ -20,15 +16,18 @@ public class Exercise {
         this.mSets = 0;
         this.mRepsPerSet = 0;
         this.mBreak = 0;
+        this.mImagePath = null;
     }
 
-    public Exercise(int mId, String mName, String mDescription, int mSets, int mRepsPerSet, int mBreak) {
+    public Exercise(int mId, String mName, String mDescription, int mSets, int mRepsPerSet,
+                    int mBreak, String imagePath) {
         this.mId = mId;
         this.mName = mName;
         this.mDescription = mDescription;
         this.mSets = mSets;
         this.mRepsPerSet = mRepsPerSet;
         this.mBreak = mBreak;
+        this.mImagePath = imagePath;
     }
 
     public int getId() {
@@ -80,15 +79,24 @@ public class Exercise {
         this.mBreak = mBreak;
     }
 
+    public String getImagePath() {
+        return mImagePath;
+    }
+
+    public void setImagePath(String mImagePath) {
+        this.mImagePath = mImagePath;
+    }
+
     @Override
     public String toString() {
         return "Exercise{" +
                 "mId=" + mId +
                 ", mName='" + mName + '\'' +
-                ", mDescription='" + mDescription + '\'' +
                 ", mSets=" + mSets +
                 ", mRepsPerSet=" + mRepsPerSet +
                 ", mBreak=" + mBreak +
+                ", mDescription='" + mDescription + '\'' +
+                ", mImagePath='" + mImagePath + '\'' +
                 '}';
     }
 }

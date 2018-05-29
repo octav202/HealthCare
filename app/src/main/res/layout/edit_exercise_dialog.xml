@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <!-- Recipe image -->
+    <!-- Exercise image -->
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -27,25 +27,54 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="7dp"/>
 
-    <!-- Time -->
+    <!-- Sets -->
     <EditText
-        android:id="@+id/timeTextView"
+        android:id="@+id/setsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/nameTextView"
         android:layout_marginTop="4dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="5dp"
-        android:hint="@string/time"
+        android:hint="@string/sets"
         android:textColor="@android:color/black"
-        android:textSize="16dp" />
+        android:textSize="16dp"
+        android:inputType="number"/>
+
+    <!-- Reps -->
+    <EditText
+        android:id="@+id/repsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/setsTextView"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="5dp"
+        android:hint="@string/reps"
+        android:textColor="@android:color/black"
+        android:textSize="16dp"
+        android:inputType="number"/>
+
+    <!-- Break -->
+    <EditText
+        android:id="@+id/breakTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/repsTextView"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="5dp"
+        android:hint="@string/break_text"
+        android:textColor="@android:color/black"
+        android:textSize="16dp"
+        android:inputType="number"/>
 
     <!-- Description -->
     <EditText
         android:id="@+id/descriptionTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/timeTextView"
+        android:layout_below="@+id/breakTextView"
         android:layout_marginTop="4dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="5dp"

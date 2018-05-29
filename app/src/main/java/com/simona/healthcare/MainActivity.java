@@ -23,13 +23,11 @@ import com.simona.healthcare.playing.PlayBarFragment;
 import com.simona.healthcare.program.ProgramsFragment;
 import com.simona.healthcare.recipe.RecipeFragment;
 import com.simona.healthcare.settings.SettingsFragment;
-import com.simona.healthcare.utils.DatabaseHelper;
 
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY_EVENTS;
 import static com.simona.healthcare.utils.Constants.GALLERY_INTENT;
 import static com.simona.healthcare.utils.Constants.TAG;
-import static com.simona.healthcare.utils.Constants.TYPE_ADD;
 import static com.simona.healthcare.utils.Constants.TYPE_EXERCISE;
 import static com.simona.healthcare.utils.Constants.TYPE_RECIPE;
 
@@ -39,9 +37,6 @@ public class MainActivity extends AppCompatActivity
     private Fragment mCurrentFragment;
 
     // PhotoPicker
-    // Id of the corresponding object (Exercise, Recipe);
-    private int mRequestedId;
-    // Type of the corresponding object (Exercise, Recipe);
     private int mRequestedType;
 
     @Override
@@ -190,31 +185,10 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Choose image from gallery for an exercise.
-     * @param id
+     * @param type Object Type - Exercise / Recipe.
      */
-    public void openGalleryForExercise(int id) {
-        mRequestedId = id;
-        mRequestedType = TYPE_EXERCISE;
-        if (Build.VERSION.SDK_INT <19){
-            Intent intent = new Intent();
-            intent.setType("*/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(intent, GALLERY_INTENT);
-        } else {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
-            startActivityForResult(intent, GALLERY_INTENT);
-        }
-    }
-
-    /**
-     * Choose image from gallery for a recipe.
-     * @param id
-     */
-    public void openGalleryForRecipe(int id) {
-        mRequestedId = id;
-        mRequestedType = TYPE_RECIPE;
+    public void openGallery(int type) {
+        mRequestedType = type;
         if (Build.VERSION.SDK_INT <19){
             Intent intent = new Intent();
             intent.setType("*/*");
@@ -246,38 +220,18 @@ public class MainActivity extends AppCompatActivity
 
                     switch (mRequestedType) {
                         case TYPE_EXERCISE:
-                            if (DatabaseHelper.getInstance(getApplicationContext()).getImageForExercise(mRequestedId) != null) {
-                                // Update Image
-                                DatabaseHelper.getInstance(getApplicationContext()).updateImageForExerciseId(imageUri.toString(), mRequestedId);
-                            } else {
-                                // Add Image to Database
-                                DatabaseHelper.getInstance(getApplicationContext()).addImageForExerciseId(
-                                        imageUri.toString(), mRequestedId);
-                            }
+                            // Image was requested by the EditRecipeDialog - update dialog image
+                            ((ExercisesFragment) mCurrentFragment).setDialogImageUri(imageUri);
                             break;
 
                         case TYPE_RECIPE:
                             // Image was requested by the EditRecipeDialog - update dialog image
-                            if (mRequestedId == TYPE_ADD) {
-                                ((RecipeFragment) mCurrentFragment).setDialogImageUri(imageUri);
-                            }
+                            ((RecipeFragment) mCurrentFragment).setDialogImageUri(imageUri);
                             break;
                         default:
                             break;
                     }
 
-
-
-                    // Refresh adapter;
-                    if (mCurrentFragment instanceof ExercisesFragment) {
-                        ((ExercisesFragment) mCurrentFragment).updateAdapter();
-                    }
-
-                    if (mCurrentFragment instanceof RecipeFragment) {
-                        ((RecipeFragment) mCurrentFragment).updateAdapter();
-                    }
-
-                    mRequestedId = 0;
                     mRequestedType = 0;
                 }
                 catch (SecurityException e){
