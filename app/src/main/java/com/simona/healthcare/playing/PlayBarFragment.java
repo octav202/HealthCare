@@ -124,7 +124,7 @@ public class PlayBarFragment extends Fragment{
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                previous();
             }
         });
 
@@ -138,7 +138,7 @@ public class PlayBarFragment extends Fragment{
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                next();
             }
         });
 
@@ -215,6 +215,51 @@ public class PlayBarFragment extends Fragment{
             // Pause Program
             pauseProgram();
         }
+    }
+
+    /**
+     * Skip to Previous Exercise
+     */
+    private void previous() {
+        pauseProgram();
+
+        // Find Index of Current Exercise
+        for (int i = mOperationIndex.get() - 1; i > 0; i--) {
+            Operation o = mOperations.get(i);
+            if (o.getType() == TYPE_TTS_EXERCISE) {
+                mOperationIndex.set(i);
+                break;
+            }
+        }
+
+        // Find Index of Previous Exercise
+        for (int i = mOperationIndex.get() - 1; i > 0; i--) {
+            Operation o = mOperations.get(i);
+            if (o.getType() == TYPE_TTS_EXERCISE) {
+                mOperationIndex.set(i);
+                break;
+            }
+        }
+
+        startProgram();
+    }
+
+    /**
+     * Skip to Next Exercise.
+     */
+    private void next() {
+        pauseProgram();
+
+        // Find Index of Next Exercise
+        for (int i = mOperationIndex.get(); i < mOperations.size(); i++) {
+            Operation o = mOperations.get(i);
+            if (o.getType() == TYPE_TTS_EXERCISE) {
+                mOperationIndex.set(i);
+                break;
+            }
+        }
+
+        startProgram();
     }
 
     private Runnable mOperationRunnable = new Runnable() {
@@ -297,6 +342,7 @@ public class PlayBarFragment extends Fragment{
                 case TYPE_TTS_PROGRAM_OVER:
                     playSound(op.getInfo());
 
+                    mBreakText.setVisibility(View.GONE);
                     mCurrentProgramLayout.setVisibility(View.GONE);
                     mNoProgramText.setVisibility(View.VISIBLE);
                     break;
