@@ -26,7 +26,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/barContent"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="100dp"
         tools:context=".MainActivity"
         tools:showIn="@layout/app_bar_main"
         android:layout_alignParentBottom="true"
