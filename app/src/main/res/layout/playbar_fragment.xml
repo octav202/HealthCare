@@ -47,7 +47,7 @@
 
         <!-- Current Rep/Break-->
         <TextView
-            android:id="@+id/currentRep"
+            android:id="@+id/breakText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/setText"

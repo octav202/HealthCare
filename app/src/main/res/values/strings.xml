@@ -43,4 +43,6 @@
     <string name="tts">Text To Speech</string>
     <string name="program_tts">Program</string>
     <string name="reps_tts">Reps</string>
+    <string name="set">Set</string>
+
 </resources>
