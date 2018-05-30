@@ -15,4 +15,15 @@ public class Constants {
     // PhotoPicker
     public static final int TYPE_EXERCISE = 100;
     public static final int TYPE_RECIPE = 200;
+
+    public static final int STATE_PAUSED = 0;
+    public static final int STATE_PLAYING = 1;
+    public static final int STATE_STOPPED = 2;
+
+    // Widget
+    public static final String ACTION_WIDGET_PREVIOUS = "com.simona.healthcare.PREV";
+    public static final String ACTION_WIDGET_PLAY = "com.simona.healthcare.PLAY";
+    public static final String ACTION_WIDGET_NEXT = "com.simona.healthcare.NEXT";
+    public static final String SERVICE_ACTION_EXTRA = "service_action_extra";
+
 }

@@ -1,10 +1,12 @@
 package com.simona.healthcare.playing;
 
 import android.app.Fragment;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
-import android.speech.tts.TextToSpeech;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,13 +20,8 @@ import android.widget.TextView;
 import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
-import com.simona.healthcare.utils.DatabaseHelper;
-import com.simona.healthcare.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.simona.healthcare.playing.Operation.TYPE_BREAK_UNIT;
@@ -36,6 +33,9 @@ import static com.simona.healthcare.playing.Operation.TYPE_TTS_REP;
 import static com.simona.healthcare.playing.Operation.TYPE_TTS_SET;
 import static com.simona.healthcare.playing.Operation.TYPE_TTS_START;
 import static com.simona.healthcare.playing.Operation.TYPE_TTS_STOP;
+import static com.simona.healthcare.utils.Constants.STATE_PAUSED;
+import static com.simona.healthcare.utils.Constants.STATE_PLAYING;
+import static com.simona.healthcare.utils.Constants.STATE_STOPPED;
 import static com.simona.healthcare.utils.Constants.TAG;
 
 
@@ -44,7 +44,7 @@ public class PlayBarFragment extends Fragment{
     private static PlayBarFragment sInstance;
     private Context mContext;
     private Program mProgram;
-    private ExecutorService mTTSExecutor;
+    private PlayService mService;
 
     // UI
     private RelativeLayout mCurrentProgramLayout;
@@ -62,17 +62,9 @@ public class PlayBarFragment extends Fragment{
     private Button mPlayButton;
     private Button mNextButton;
 
-    // TextToSpeech
-    TextToSpeech textToSpeech;
-
     // State
     private AtomicInteger mState = new AtomicInteger();
-    private int STATE_PAUSED = 0;
-    private int STATE_PLAYING = 1;
-    private int STATE_STOPPED = 2;
-    private Handler mHandler;
-    private AtomicInteger mOperationIndex = new AtomicInteger();
-    private ArrayList<Operation> mOperations;
+    private boolean mVisible;
 
     public static PlayBarFragment getInstance() {
         if (sInstance == null) {
@@ -82,25 +74,30 @@ public class PlayBarFragment extends Fragment{
         return sInstance;
     }
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = ((PlayService.LocalBinder) service).getService();
+            mProgram = mService.getProgram();
+            setupViewForProgram();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.playbar_fragment, container, false);
 
+        mVisible = true;
         mContext = getActivity().getApplicationContext();
-        mHandler = new Handler(getActivity().getMainLooper());
+        mContext.bindService(new Intent(mContext, PlayService.class),
+                mConnection, Context.BIND_AUTO_CREATE);
 
-        mTTSExecutor = Executors.newSingleThreadExecutor();
-
-        textToSpeech=new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if(status != TextToSpeech.ERROR) {
-                    textToSpeech.setLanguage(Locale.US);
-                    textToSpeech.setSpeechRate(0.8f);
-                }
-            }
-        });
+        View view = inflater.inflate(R.layout.playbar_fragment, container, false);
 
         mCurrentProgramLayout = view.findViewById(R.id.currentProgramLayout);
         mNoProgramText = view.findViewById(R.id.noProgramText);
@@ -115,42 +112,46 @@ public class PlayBarFragment extends Fragment{
         mPlayButton = view.findViewById(R.id.playButton);
         mNextButton = view.findViewById(R.id.nextButton);
 
-        if (mState.get() == STATE_PAUSED) {
-            mPlayButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_play));
-        } else {
-            mPlayButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_pause));
-        }
-
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                previous();
+                if (mService != null) {
+                    mService.previous();
+                }
             }
         });
 
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                play();
+                if (mService != null) {
+                    mService.play();
+                }
             }
         });
 
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                next();
+                if (mService != null) {
+                    mService.next();
+                }
             }
         });
 
-        // Get current program
-        if (mProgram == null) {
-            mCurrentProgramLayout.setVisibility(View.GONE);
-            mNoProgramText.setVisibility(View.VISIBLE);
-        } else {
-            setupViewForProgram();
-        }
-
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mVisible = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mContext.unbindService(mConnection);
     }
 
     /**
@@ -159,200 +160,21 @@ public class PlayBarFragment extends Fragment{
      * @param program
      */
     public void setProgram(Program program) {
-
-        stopProgram();
+        if (mService != null) {
+            mService.setProgram(program);
+        }
         mProgram = program;
-        if (program == null) {
-            mCurrentProgramLayout.setVisibility(View.GONE);
-            mNoProgramText.setVisibility(View.VISIBLE);
-        } else {
-            // Get exercises for current program
-            if (mProgram.getExercises().size() == 0) {
-                mProgram.setExercises(DatabaseHelper.getInstance(
-                        mContext).getExercisesForProgramId(mProgram.getId()));
-            }
-            startProgram();
-        }
-    }
-
-    private void startProgram() {
-        Log.d(TAG, "startProgram()");
         setupViewForProgram();
-        mOperations = new ArrayList<>();
 
-        mOperations.addAll(Operation.programToOperations(mContext, mProgram));
-        mState.set(STATE_PLAYING);
-        mPlayButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_pause));
-        mHandler.post(mOperationRunnable);
     }
 
-    private void stopProgram() {
+    public void stopProgram() {
         Log.d(TAG, "stopProgram()");
-        mOperationIndex.set(0);
-        textToSpeech.stop();
-        mHandler.removeCallbacksAndMessages(null);
-        mState.set(STATE_STOPPED);
-    }
-
-    private void pauseProgram() {
-        Log.d(TAG, "pauseProgram()");
-        textToSpeech.stop();
-        mHandler.removeCallbacksAndMessages(null);
-        mState.set(STATE_PAUSED);
-    }
-
-    private void play() {
-        if (mState.get() == STATE_PAUSED) {
-            mState.set(STATE_PLAYING);
-            mPlayButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_pause));
-
-            // Play Program
-            startProgram();
-        } else if (mState.get() == STATE_PLAYING) {
-            mState.set(STATE_PAUSED);
-            mPlayButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_play));
-
-            // Pause Program
-            pauseProgram();
-        }
-    }
-
-    /**
-     * Skip to Previous Exercise
-     */
-    private void previous() {
-        pauseProgram();
-
-        // Find Index of Current Exercise
-        for (int i = mOperationIndex.get() - 1; i > 0; i--) {
-            Operation o = mOperations.get(i);
-            if (o.getType() == TYPE_TTS_EXERCISE) {
-                mOperationIndex.set(i);
-                break;
-            }
+        if (mService != null) {
+            mService.stopProgram();
         }
 
-        // Find Index of Previous Exercise
-        for (int i = mOperationIndex.get() - 1; i > 0; i--) {
-            Operation o = mOperations.get(i);
-            if (o.getType() == TYPE_TTS_EXERCISE) {
-                mOperationIndex.set(i);
-                break;
-            }
-        }
-
-        startProgram();
     }
-
-    /**
-     * Skip to Next Exercise.
-     */
-    private void next() {
-        pauseProgram();
-
-        // Find Index of Next Exercise
-        for (int i = mOperationIndex.get(); i < mOperations.size(); i++) {
-            Operation o = mOperations.get(i);
-            if (o.getType() == TYPE_TTS_EXERCISE) {
-                mOperationIndex.set(i);
-                break;
-            }
-        }
-
-        startProgram();
-    }
-
-    private Runnable mOperationRunnable = new Runnable() {
-        @Override
-        public void run() {
-
-            if (mState.get() == STATE_STOPPED || mState.get() == STATE_PAUSED) {
-                Log.d(TAG, "Stopped/Paused, returning..");
-            }
-
-            if (mOperationIndex.get() == mOperations.size()) {
-                return;
-            }
-
-            Operation op = mOperations.get(mOperationIndex.getAndIncrement());
-            Log.d(TAG, "Operation : " + op);
-
-            Exercise e = op.getExercise();
-
-            switch (op.getType()) {
-                case TYPE_TTS_PROGRAM:
-                    String text = mContext.getResources().getString(R.string.starting_program) + " "
-                            + op.getInfo();
-                    playSound(text);
-                    mProgramText.setText(op.getInfo());
-                    break;
-                case TYPE_TTS_EXERCISE:
-                    playSound(e.getName());
-
-                    // Update UI
-                    mExerciseText.setText(e.getName());
-                    mElapsedText.setText("0");
-                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
-                    mSeekbar.setProgress(0);
-                    mSeekbar.setMax(e.getRepsPerSet());
-                    break;
-                case TYPE_TTS_EXERCISE_SETS_AND_REPS:
-                    playSound(op.getInfo());
-                    break;
-                case TYPE_TTS_STOP:
-                    playSound(op.getInfo());
-                    mBreakText.setVisibility(View.VISIBLE);
-                    break;
-                case TYPE_TTS_START:
-                    playSound(op.getInfo());
-                    mBreakText.setVisibility(View.GONE);
-                    break;
-                case TYPE_TTS_SET:
-                    String setNumber = mContext.getResources().getString(R.string.set) + " " + op.getInfo();
-                    playSound(setNumber);
-
-                    // Update UI
-                    mElapsedText.setText("0");
-                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
-                    mSeekbar.setMax(e.getRepsPerSet());
-                    mSetText.setText("Set " + (op.getInfo()) + "/" +e.getSets());
-                    mBreakText.setVisibility(View.GONE);
-                    mSeekbar.setProgress(0);
-                    break;
-                case TYPE_TTS_REP:
-
-                    playSound(op.getInfo());
-
-                    // Update UI
-                    mElapsedText.setText(op.getInfo());
-                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
-                    mBreakText.setVisibility(View.GONE);
-                    mSeekbar.setProgress(Integer.parseInt(op.getInfo()));
-                    break;
-                case TYPE_BREAK_UNIT:
-
-                    mBreakText.setVisibility(View.VISIBLE);
-                    mElapsedText.setText(String.valueOf(0));
-                    mTotalText.setText(String.valueOf(e.getBreak()));
-                    mSeekbar.setMax(e.getBreak());
-                    mSeekbar.setProgress(Integer.parseInt(op.getInfo()));
-                    // Update UI
-                    break;
-
-                case TYPE_TTS_PROGRAM_OVER:
-                    playSound(op.getInfo());
-
-                    mBreakText.setVisibility(View.GONE);
-                    mCurrentProgramLayout.setVisibility(View.GONE);
-                    mNoProgramText.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    break;
-            }
-
-            mHandler.postDelayed(this, op.getDuration());
-        }
-    };
 
     public Program getProgram() {
         return mProgram;
@@ -361,25 +183,89 @@ public class PlayBarFragment extends Fragment{
     /**
      * Display program information.
      */
-    private void setupViewForProgram() {
-        mCurrentProgramLayout.setVisibility(View.VISIBLE);
-        mNoProgramText.setVisibility(View.GONE);
-        mProgramText.setText(mProgram.getName());
+    public void setupViewForProgram() {
+        if (mProgram != null) {
+            mCurrentProgramLayout.setVisibility(View.VISIBLE);
+            mNoProgramText.setVisibility(View.GONE);
+            mProgramText.setText(mProgram.getName());
+        } else {
+            mCurrentProgramLayout.setVisibility(View.GONE);
+            mNoProgramText.setVisibility(View.VISIBLE);
+        }
     }
 
-    /**
-     * Text to speech - start, stop, exercise name, sets, reps.
-     *
-     * @param text
-     */
-    private void playSound(final String text) {
-        if (Utils.getProgramTTS(mContext)) {
-            mTTSExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-                }
-            });
+    public void setState(int state) {
+        switch (state) {
+            case STATE_PAUSED:
+            case STATE_STOPPED:
+                mPlayButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_play));
+                break;
+            case STATE_PLAYING:
+                mPlayButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_pause));
+                break;
+            default:
+                break;
         }
+    }
+
+    public void handleOperation(Operation op) {
+        Log.d(TAG, "handleOperation() : " + op);
+        Exercise e = op.getExercise();
+
+        switch (op.getType()) {
+            case TYPE_TTS_PROGRAM:
+                mProgramText.setText(op.getInfo());
+                mExerciseText.setText("");
+                mSeekbar.setProgress(0);
+                mSetText.setText("");
+                mElapsedText.setText("");
+                mTotalText.setText("");
+                break;
+            case TYPE_TTS_EXERCISE:
+                mExerciseText.setText(e.getName());
+                mElapsedText.setText("0");
+                mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+                mSetText.setText("Set " + "1 /" + e.getSets());
+                mSeekbar.setProgress(0);
+                mSeekbar.setMax(e.getRepsPerSet());
+                break;
+            case TYPE_TTS_EXERCISE_SETS_AND_REPS:
+                break;
+            case TYPE_TTS_STOP:
+                mBreakText.setVisibility(View.VISIBLE);
+                break;
+            case TYPE_TTS_START:
+                mBreakText.setVisibility(View.GONE);
+                break;
+            case TYPE_TTS_SET:
+                mElapsedText.setText("0");
+                mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+                mSeekbar.setMax(e.getRepsPerSet());
+                mSetText.setText("Set " + (op.getInfo()) + "/" + e.getSets());
+                mBreakText.setVisibility(View.GONE);
+                mSeekbar.setProgress(0);
+                break;
+            case TYPE_TTS_REP:
+                mElapsedText.setText(op.getInfo());
+                mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+                mBreakText.setVisibility(View.GONE);
+                mSeekbar.setProgress(Integer.parseInt(op.getInfo()));
+                break;
+            case TYPE_BREAK_UNIT:
+                mBreakText.setVisibility(View.VISIBLE);
+                mElapsedText.setText(String.valueOf(0));
+                mTotalText.setText(String.valueOf(e.getBreak()));
+                mSeekbar.setMax(e.getBreak());
+                mSeekbar.setProgress(Integer.parseInt(op.getInfo()));
+                break;
+            case TYPE_TTS_PROGRAM_OVER:
+                mBreakText.setVisibility(View.GONE);
+                mCurrentProgramLayout.setVisibility(View.GONE);
+                mNoProgramText.setVisibility(View.VISIBLE);
+                break;
+            default:
+                break;
+        }
+
     }
 }

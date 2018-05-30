@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:id="@+id/root_layout">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/currentProgramLayout">
+
+        <!-- Exercise -->
+        <TextView
+            android:id="@+id/exerciseText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="5dp"
+            android:textSize="16dp"
+            android:text="Exercise"
+            android:textColor="@android:color/white"/>
+
+        <!-- Program -->
+        <TextView
+            android:id="@+id/programText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="8dp"
+            android:textSize="15dp"
+            android:textColor="@android:color/white"
+            android:text="Program"/>
+
+        <!-- Current Rep/Break-->
+        <TextView
+            android:id="@+id/breakText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/setText"
+            android:layout_centerHorizontal="true"
+            android:text="@string/break_text"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"/>
+
+        <!-- Set number-->
+        <TextView
+            android:id="@+id/setText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/exerciseText"
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="13dp"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="0dp"
+            android:text="Set 1/5"/>
+
+        <LinearLayout
+            android:id="@+id/controlsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/prevButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/ic_previous"/>
+
+            <Button
+                android:id="@+id/playButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/ic_play"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"/>
+
+            <Button
+                android:id="@+id/nextButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/ic_next" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noProgramText"
+        android:textSize="18dp"
+        android:layout_centerInParent="true"
+        android:text="@string/no_program"
+        android:textColor="@android:color/white"
+        android:visibility="gone"/>
+
+</RelativeLayout>
