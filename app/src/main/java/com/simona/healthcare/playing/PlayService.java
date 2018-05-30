@@ -1,6 +1,9 @@
 package com.simona.healthcare.playing;
 
+import android.app.Notification;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
@@ -10,17 +13,17 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.RemoteViews;
 
 import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
 import com.simona.healthcare.utils.DatabaseHelper;
 import com.simona.healthcare.utils.Utils;
+import com.simona.healthcare.widget.PlayWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.simona.healthcare.playing.Operation.TYPE_BREAK_UNIT;
@@ -32,6 +35,9 @@ import static com.simona.healthcare.playing.Operation.TYPE_TTS_REP;
 import static com.simona.healthcare.playing.Operation.TYPE_TTS_SET;
 import static com.simona.healthcare.playing.Operation.TYPE_TTS_START;
 import static com.simona.healthcare.playing.Operation.TYPE_TTS_STOP;
+import static com.simona.healthcare.utils.Constants.ACTION_WIDGET_NEXT;
+import static com.simona.healthcare.utils.Constants.ACTION_WIDGET_PLAY;
+import static com.simona.healthcare.utils.Constants.ACTION_WIDGET_PREVIOUS;
 import static com.simona.healthcare.utils.Constants.SERVICE_ACTION_EXTRA;
 import static com.simona.healthcare.utils.Constants.STATE_PAUSED;
 import static com.simona.healthcare.utils.Constants.STATE_PLAYING;
@@ -64,6 +70,7 @@ public class PlayService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate()");
+        startForeground(1,new Notification());
 
         mContext = getApplicationContext();
         mHandler = new Handler();
@@ -82,6 +89,21 @@ public class PlayService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand() " + intent.getStringExtra(SERVICE_ACTION_EXTRA));
+
+        switch (intent.getStringExtra(SERVICE_ACTION_EXTRA)) {
+            case ACTION_WIDGET_PREVIOUS:
+                previous();
+                break;
+            case ACTION_WIDGET_PLAY:
+                play();
+                break;
+            case ACTION_WIDGET_NEXT:
+                next();
+                break;
+            default:
+                break;
+        }
+
         return START_STICKY;
     }
 
@@ -90,7 +112,7 @@ public class PlayService extends Service {
      * Set null for no program.
      * @param program
      */
-    public void setProgram(Program program) {
+    public synchronized void setProgram(Program program) {
 
         stopProgram();
         mProgram = program;
@@ -108,6 +130,12 @@ public class PlayService extends Service {
 
     public void startProgram() {
         Log.d(TAG, "startProgram()");
+
+        if (mProgram == null) {
+            Log.e(TAG, "No Program Selected");
+            return;
+        }
+
         mOperations = new ArrayList<>();
         mOperations.addAll(Operation.programToOperations(mContext, mProgram));
         mState.set(STATE_PLAYING);
@@ -136,15 +164,17 @@ public class PlayService extends Service {
     }
 
     private void sendState(int state) {
+        Log.d(TAG, "sendState() " + state);
         PlayBarFragment.getInstance().setState(state);
+        updateWidget(null);
 
-        // TO DO - send to widget
     }
 
     private void sendOperation(Operation op) {
+        Log.d(TAG, "sendOperation() " + op);
         PlayBarFragment.getInstance().handleOperation(op);
+        updateWidget(op);
 
-        // TO DO -send to widget
     }
 
     public void play() {
@@ -165,6 +195,12 @@ public class PlayService extends Service {
      * Skip to Previous Exercise
      */
     public void previous() {
+
+        if (mProgram == null) {
+            Log.e(TAG, "No Program Selected");
+            return;
+        }
+
         pauseProgram();
 
         // Find Index of Current Exercise
@@ -192,6 +228,12 @@ public class PlayService extends Service {
      * Skip to Next Exercise.
      */
     public void next() {
+
+        if (mProgram == null) {
+            Log.e(TAG, "No Program Selected");
+            return;
+        }
+
         pauseProgram();
 
         // Find Index of Next Exercise
@@ -283,5 +325,94 @@ public class PlayService extends Service {
         PlayService getService() {
             return PlayService.this;
         }
+    }
+
+    /**
+     * Update Widget
+     * @param operation
+     */
+    private void updateWidget(Operation operation) {
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
+        RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.widget_layout);
+        ComponentName thisWidget = new ComponentName(mContext, PlayWidgetProvider.class);
+
+        // Handle Button States
+        switch (mState.get()) {
+            case STATE_PAUSED:
+            case STATE_STOPPED:
+                // TO DO add image
+                break;
+            case STATE_PLAYING:
+                // TO DO add image
+                break;
+            default:
+                break;
+        }
+
+        // Handle TextViews
+        if (operation != null) {
+
+            Exercise e = operation.getExercise();
+
+//            switch (operation.getType()) {
+//                case TYPE_TTS_PROGRAM:
+//                    remoteViews.setTextViewText(R.id.exerciseText, operation.getInfo());
+//                    mProgramText.setText(operation.getInfo());
+//                    mExerciseText.setText("");
+//                    mSeekbar.setProgress(0);
+//                    mSetText.setText("");
+//                    mElapsedText.setText("");
+//                    mTotalText.setText("");
+//                    break;
+//                case TYPE_TTS_EXERCISE:
+//                    mExerciseText.setText(e.getName());
+//                    mElapsedText.setText("0");
+//                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+//                    mSetText.setText("Set " + "1 /" + e.getSets());
+//                    mSeekbar.setProgress(0);
+//                    mSeekbar.setMax(e.getRepsPerSet());
+//                    break;
+//                case TYPE_TTS_EXERCISE_SETS_AND_REPS:
+//                    break;
+//                case TYPE_TTS_STOP:
+//                    mBreakText.setVisibility(View.VISIBLE);
+//                    break;
+//                case TYPE_TTS_START:
+//                    mBreakText.setVisibility(View.GONE);
+//                    break;
+//                case TYPE_TTS_SET:
+//                    mElapsedText.setText("0");
+//                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+//                    mSeekbar.setMax(e.getRepsPerSet());
+//                    mSetText.setText("Set " + (operation.getInfo()) + "/" + e.getSets());
+//                    mBreakText.setVisibility(View.GONE);
+//                    mSeekbar.setProgress(0);
+//                    break;
+//                case TYPE_TTS_REP:
+//                    mElapsedText.setText(operation.getInfo());
+//                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
+//                    mBreakText.setVisibility(View.GONE);
+//                    mSeekbar.setProgress(Integer.parseInt(operation.getInfo()));
+//                    break;
+//                case TYPE_BREAK_UNIT:
+//                    mBreakText.setVisibility(View.VISIBLE);
+//                    mElapsedText.setText(String.valueOf(0));
+//                    mTotalText.setText(String.valueOf(e.getBreak()));
+//                    mSeekbar.setMax(e.getBreak());
+//                    mSeekbar.setProgress(Integer.parseInt(operation.getInfo()));
+//                    break;
+//                case TYPE_TTS_PROGRAM_OVER:
+//                    mBreakText.setVisibility(View.GONE);
+//                    mCurrentProgramLayout.setVisibility(View.GONE);
+//                    mNoProgramText.setVisibility(View.VISIBLE);
+//                    break;
+//                default:
+//                    break;
+//            }
+
+
+        }
+        appWidgetManager.updateAppWidget(thisWidget, remoteViews);
     }
 }

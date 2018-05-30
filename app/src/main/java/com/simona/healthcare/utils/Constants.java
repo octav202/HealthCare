@@ -25,5 +25,4 @@ public class Constants {
     public static final String ACTION_WIDGET_PLAY = "com.simona.healthcare.PLAY";
     public static final String ACTION_WIDGET_NEXT = "com.simona.healthcare.NEXT";
     public static final String SERVICE_ACTION_EXTRA = "service_action_extra";
-
 }

@@ -1,7 +1,6 @@
 package com.simona.healthcare.playing;
 
 import android.content.Context;
-import android.graphics.Path;
 
 import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;

@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -30,8 +31,6 @@ public class PlayWidgetProvider extends AppWidgetProvider {
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                     R.layout.widget_layout);
-            remoteViews.setTextViewText(R.id.programNameText, "Workout");
-            remoteViews.setTextViewText(R.id.exercisesTextView, "Pull Ups");
 
             // Previous Button
             Intent prev = new Intent(context, PlayWidgetProvider.class);
@@ -61,18 +60,21 @@ public class PlayWidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
         Log.d(TAG, "onReceive() " + intent.getAction());
 
-
-
         switch (intent.getAction()) {
             case ACTION_WIDGET_PREVIOUS:
             case ACTION_WIDGET_PLAY:
             case ACTION_WIDGET_NEXT:
                 Intent serviceIntent = new Intent(context, PlayService.class);
                 serviceIntent.putExtra(SERVICE_ACTION_EXTRA, intent.getAction());
-                context.startService(serviceIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(serviceIntent);
+                } else {
+                    context.startService(serviceIntent);
+                }
                 break;
             default:
                 break;
         }
     }
+
 }
