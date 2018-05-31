@@ -1,5 +1,6 @@
 package com.simona.healthcare.playing;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,9 +18,11 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
+import com.simona.healthcare.utils.Constants;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,6 +44,8 @@ import static com.simona.healthcare.utils.Constants.TAG;
 
 public class PlayBarFragment extends Fragment{
 
+    public static final String TAG = Constants.TAG + PlayBarFragment.class.getSimpleName();
+
     private static PlayBarFragment sInstance;
     private Context mContext;
     private Program mProgram;
@@ -48,6 +53,7 @@ public class PlayBarFragment extends Fragment{
 
     // UI
     private RelativeLayout mCurrentProgramLayout;
+    private RelativeLayout mNoProgramLayout;
     private TextView mNoProgramText;
     private TextView mProgramText;
     private TextView mExerciseText;
@@ -77,9 +83,21 @@ public class PlayBarFragment extends Fragment{
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d(TAG, "onServiceConnected");
             mService = ((PlayService.LocalBinder) service).getService();
             mProgram = mService.getProgram();
             setupViewForProgram();
+            if (mProgram != null) {
+                Log.d(TAG, "Current Program : " + mProgram);
+                mProgramText.setText(mProgram.getName());
+                Operation currentOperation = mService.getOperation();
+                Exercise e = currentOperation.getExercise();
+                if (e != null) {
+                    mExerciseText.setText(e.getName());
+                    mSeekbar.setMax(e.getRepsPerSet());
+                }
+                handleOperation(currentOperation);
+            }
         }
 
         @Override
@@ -94,12 +112,16 @@ public class PlayBarFragment extends Fragment{
 
         mVisible = true;
         mContext = getActivity().getApplicationContext();
+
+        mContext.startService(new Intent(mContext, PlayService.class));
+
         mContext.bindService(new Intent(mContext, PlayService.class),
                 mConnection, Context.BIND_AUTO_CREATE);
 
         View view = inflater.inflate(R.layout.playbar_fragment, container, false);
 
         mCurrentProgramLayout = view.findViewById(R.id.currentProgramLayout);
+        mNoProgramLayout = view.findViewById(R.id.noProgramLayout);
         mNoProgramText = view.findViewById(R.id.noProgramText);
         mProgramText = view.findViewById(R.id.programText);
         mExerciseText = view.findViewById(R.id.exerciseText);
@@ -140,6 +162,16 @@ public class PlayBarFragment extends Fragment{
         });
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart()");
+        if(mService != null) {
+            mProgram = mService.getProgram();
+            setupViewForProgram();
+        }
     }
 
     @Override
@@ -186,11 +218,12 @@ public class PlayBarFragment extends Fragment{
     public void setupViewForProgram() {
         if (mProgram != null) {
             mCurrentProgramLayout.setVisibility(View.VISIBLE);
-            mNoProgramText.setVisibility(View.GONE);
+            mNoProgramLayout.setVisibility(View.GONE);
             mProgramText.setText(mProgram.getName());
+            mBreakText.setVisibility(View.GONE);
         } else {
             mCurrentProgramLayout.setVisibility(View.GONE);
-            mNoProgramText.setVisibility(View.VISIBLE);
+            mNoProgramLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -209,9 +242,14 @@ public class PlayBarFragment extends Fragment{
     }
 
     public void handleOperation(Operation op) {
-        Log.d(TAG, "handleOperation() : " + op);
-        Exercise e = op.getExercise();
 
+        Log.d(TAG, "handleOperation() : " + op);
+
+        if (op == null) {
+            return;
+        }
+
+        Exercise e = op.getExercise();
         switch (op.getType()) {
             case TYPE_TTS_PROGRAM:
                 mProgramText.setText(op.getInfo());
@@ -261,7 +299,14 @@ public class PlayBarFragment extends Fragment{
             case TYPE_TTS_PROGRAM_OVER:
                 mBreakText.setVisibility(View.GONE);
                 mCurrentProgramLayout.setVisibility(View.GONE);
-                mNoProgramText.setVisibility(View.VISIBLE);
+                mNoProgramLayout.setVisibility(View.VISIBLE);
+
+                // Refresh Programs Adapter
+                mProgram = null;
+                MainActivity activity = (MainActivity) getActivity();
+                if (activity != null) {
+                    activity.refreshPrograms();
+                }
                 break;
             default:
                 break;

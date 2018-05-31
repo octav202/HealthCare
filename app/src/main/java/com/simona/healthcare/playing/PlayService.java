@@ -18,6 +18,7 @@ import android.widget.RemoteViews;
 import com.simona.healthcare.R;
 import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
+import com.simona.healthcare.utils.Constants;
 import com.simona.healthcare.utils.DatabaseHelper;
 import com.simona.healthcare.utils.Utils;
 import com.simona.healthcare.widget.PlayWidgetProvider;
@@ -46,6 +47,7 @@ import static com.simona.healthcare.utils.Constants.TAG;
 
 public class PlayService extends Service {
 
+    public static final String TAG = Constants.TAG + PlayService.class.getSimpleName();
     private Context mContext;
     private LocalBinder mBinder = new LocalBinder();
 
@@ -90,18 +92,22 @@ public class PlayService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand() " + intent.getStringExtra(SERVICE_ACTION_EXTRA));
 
-        switch (intent.getStringExtra(SERVICE_ACTION_EXTRA)) {
-            case ACTION_WIDGET_PREVIOUS:
-                previous();
-                break;
-            case ACTION_WIDGET_PLAY:
-                play();
-                break;
-            case ACTION_WIDGET_NEXT:
-                next();
-                break;
-            default:
-                break;
+        String action = intent.getStringExtra(SERVICE_ACTION_EXTRA);
+
+        if (action != null) {
+            switch (action) {
+                case ACTION_WIDGET_PREVIOUS:
+                    previous();
+                    break;
+                case ACTION_WIDGET_PLAY:
+                    play();
+                    break;
+                case ACTION_WIDGET_NEXT:
+                    next();
+                    break;
+                default:
+                    break;
+            }
         }
 
         return START_STICKY;
@@ -116,15 +122,17 @@ public class PlayService extends Service {
 
         stopProgram();
         mProgram = program;
-        if (program == null) {
+        if (program != null) {
             PlayBarFragment.getInstance().setupViewForProgram();
-        } else {
+            updateWidget(new Operation(TYPE_TTS_PROGRAM, 0, program.getName(), null));
             // Get exercises for current program
             if (mProgram.getExercises().size() == 0) {
                 mProgram.setExercises(DatabaseHelper.getInstance(
                         mContext).getExercisesForProgramId(mProgram.getId()));
             }
             startProgram();
+        } else {
+
         }
     }
 
@@ -310,6 +318,14 @@ public class PlayService extends Service {
         return mProgram;
     }
 
+    public Operation getOperation() {
+        if (mProgram !=null && mOperations != null) {
+            return mOperations.get(mOperationIndex.get());
+        }
+
+        return null;
+    }
+
     /**
      * Text to speech - start, stop, exercise name, sets, reps.
      *
@@ -341,10 +357,16 @@ public class PlayService extends Service {
         switch (mState.get()) {
             case STATE_PAUSED:
             case STATE_STOPPED:
-                // TO DO add image
+                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_play);
+
+                remoteViews.setViewVisibility(R.id.noProgramLayout, View.VISIBLE);
+                remoteViews.setViewVisibility(R.id.currentProgramLayout, View.GONE);
                 break;
             case STATE_PLAYING:
-                // TO DO add image
+                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_pause);
+
+                remoteViews.setViewVisibility(R.id.noProgramLayout, View.GONE);
+                remoteViews.setViewVisibility(R.id.currentProgramLayout, View.VISIBLE);
                 break;
             default:
                 break;
@@ -355,64 +377,54 @@ public class PlayService extends Service {
 
             Exercise e = operation.getExercise();
 
-//            switch (operation.getType()) {
-//                case TYPE_TTS_PROGRAM:
-//                    remoteViews.setTextViewText(R.id.exerciseText, operation.getInfo());
-//                    mProgramText.setText(operation.getInfo());
-//                    mExerciseText.setText("");
-//                    mSeekbar.setProgress(0);
-//                    mSetText.setText("");
-//                    mElapsedText.setText("");
-//                    mTotalText.setText("");
-//                    break;
-//                case TYPE_TTS_EXERCISE:
-//                    mExerciseText.setText(e.getName());
-//                    mElapsedText.setText("0");
-//                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
-//                    mSetText.setText("Set " + "1 /" + e.getSets());
-//                    mSeekbar.setProgress(0);
-//                    mSeekbar.setMax(e.getRepsPerSet());
-//                    break;
-//                case TYPE_TTS_EXERCISE_SETS_AND_REPS:
-//                    break;
-//                case TYPE_TTS_STOP:
-//                    mBreakText.setVisibility(View.VISIBLE);
-//                    break;
-//                case TYPE_TTS_START:
-//                    mBreakText.setVisibility(View.GONE);
-//                    break;
-//                case TYPE_TTS_SET:
-//                    mElapsedText.setText("0");
-//                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
-//                    mSeekbar.setMax(e.getRepsPerSet());
-//                    mSetText.setText("Set " + (operation.getInfo()) + "/" + e.getSets());
-//                    mBreakText.setVisibility(View.GONE);
-//                    mSeekbar.setProgress(0);
-//                    break;
-//                case TYPE_TTS_REP:
-//                    mElapsedText.setText(operation.getInfo());
-//                    mTotalText.setText(String.valueOf(e.getRepsPerSet()));
-//                    mBreakText.setVisibility(View.GONE);
-//                    mSeekbar.setProgress(Integer.parseInt(operation.getInfo()));
-//                    break;
-//                case TYPE_BREAK_UNIT:
-//                    mBreakText.setVisibility(View.VISIBLE);
-//                    mElapsedText.setText(String.valueOf(0));
-//                    mTotalText.setText(String.valueOf(e.getBreak()));
-//                    mSeekbar.setMax(e.getBreak());
-//                    mSeekbar.setProgress(Integer.parseInt(operation.getInfo()));
-//                    break;
-//                case TYPE_TTS_PROGRAM_OVER:
-//                    mBreakText.setVisibility(View.GONE);
-//                    mCurrentProgramLayout.setVisibility(View.GONE);
-//                    mNoProgramText.setVisibility(View.VISIBLE);
-//                    break;
-//                default:
-//                    break;
-//            }
+            switch (operation.getType()) {
+                case TYPE_TTS_PROGRAM:
+
+                    remoteViews.setViewVisibility(R.id.noProgramLayout, View.GONE);
+                    remoteViews.setViewVisibility(R.id.currentProgramLayout, View.VISIBLE);
+
+                    remoteViews.setTextViewText(R.id.programText, operation.getInfo());
+                    remoteViews.setTextViewText(R.id.exerciseText, "");
+                    remoteViews.setTextViewText(R.id.setText, "");
+                    break;
+                case TYPE_TTS_EXERCISE:
+                    remoteViews.setTextViewText(R.id.exerciseText, e.getName());
+                    remoteViews.setTextViewText(R.id.currentRep, "");
+                    remoteViews.setTextViewText(R.id.setText, "Set " + "1/" + e.getSets());
+                    break;
+                case TYPE_TTS_EXERCISE_SETS_AND_REPS:
+                    break;
+                case TYPE_TTS_STOP:
+                    remoteViews.setViewVisibility(R.id.currentRep, View.VISIBLE);
+                    remoteViews.setTextViewText(R.id.currentRep, mContext.getResources().getString(R.string.break_text));
+                    break;
+                case TYPE_TTS_START:
+                    break;
+                case TYPE_TTS_SET:
+                    remoteViews.setTextViewText(R.id.setText, ("Set " + operation.getInfo()) + "/" + e.getSets());
+                    remoteViews.setTextViewText(R.id.currentRep, "");
+                    break;
+                case TYPE_TTS_REP:
+                    remoteViews.setTextViewText(R.id.currentRep, operation.getInfo() + "/" + e.getRepsPerSet());
+                    break;
+                case TYPE_BREAK_UNIT:
+                    remoteViews.setTextViewText(R.id.exerciseText, mContext.getResources().getString(R.string.break_text));
+                    break;
+                case TYPE_TTS_PROGRAM_OVER:
+                    remoteViews.setViewVisibility(R.id.noProgramLayout, View.VISIBLE);
+                    remoteViews.setViewVisibility(R.id.currentProgramLayout, View.GONE);
+                    break;
+                default:
+                    break;
+            }
 
 
         }
         appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+
+        // Program Over - stop service
+        if (operation != null && operation.getType() == TYPE_TTS_PROGRAM_OVER) {
+            stopSelf();
+        }
     }
 }

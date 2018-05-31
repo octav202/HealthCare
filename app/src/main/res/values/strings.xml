@@ -45,4 +45,6 @@
     <string name="reps_tts">Reps</string>
     <string name="set">Set</string>
 
+    <string name="select_program">Select Program</string>
+
 </resources>

@@ -27,22 +27,16 @@ public class ExercisesFragment extends Fragment {
     private ListView mListView;
     private ExercisesAdapter mAdapter;
     private Context mContext;
-    private int mProgramId;
     private EditExerciseDialog mDialog;
 
-    public static ExercisesFragment newInstance(int selectedId) {
+    public static ExercisesFragment newInstance() {
         ExercisesFragment fragment = new ExercisesFragment();
-        Bundle args = new Bundle();
-        args.putInt("selectedId", selectedId);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mProgramId = getArguments().getInt("selectedId");
-        Log.d(TAG, "onCreateView() " + mProgramId);
 
         mContext = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.exercises_fragment, container, false);

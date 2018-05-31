@@ -21,7 +21,7 @@ public class SettingsFragment extends Fragment {
     private Switch mProgramSwitch;
     private Switch mRepsSwitch;
 
-    public static SettingsFragment newInstance(int selectedId) {
+    public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
         return fragment;
     }

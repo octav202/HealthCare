@@ -69,7 +69,7 @@ public class CategoriesFragment extends Fragment {
                    Category selected =  (Category) adapter.getItem(position);
 
                    // Open programs activity for the selected category
-                   Fragment programs = ProgramsFragment.newInstance(selected.getId());
+                   Fragment programs = ProgramsFragment.newInstance();
                    MainActivity activity = (MainActivity) getActivity();
                    activity.loadFragment(programs);
                 }

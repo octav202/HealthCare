@@ -28,7 +28,7 @@ public class RecipeFragment extends Fragment {
     private Context mContext;
     private EditRecipeDialog mDialog;
 
-    public static RecipeFragment newInstance(int selectedId) {
+    public static RecipeFragment newInstance() {
         RecipeFragment fragment = new RecipeFragment();
         return fragment;
     }

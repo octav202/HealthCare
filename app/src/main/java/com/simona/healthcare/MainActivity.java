@@ -23,9 +23,11 @@ import com.simona.healthcare.playing.PlayBarFragment;
 import com.simona.healthcare.program.ProgramsFragment;
 import com.simona.healthcare.recipe.RecipeFragment;
 import com.simona.healthcare.settings.SettingsFragment;
+import com.simona.healthcare.utils.Constants;
 
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY_EVENTS;
+import static com.simona.healthcare.utils.Constants.EXTRA_KEY_PROGRAMS;
 import static com.simona.healthcare.utils.Constants.GALLERY_INTENT;
 import static com.simona.healthcare.utils.Constants.TAG;
 import static com.simona.healthcare.utils.Constants.TYPE_EXERCISE;
@@ -34,6 +36,7 @@ import static com.simona.healthcare.utils.Constants.TYPE_RECIPE;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
     private Fragment mCurrentFragment;
 
     // PhotoPicker
@@ -60,8 +63,21 @@ public class MainActivity extends AppCompatActivity
 
         if (getIntent() != null) {
             String tab = getIntent().getStringExtra(EXTRA_KEY);
-            if (tab != null && tab.equals(EXTRA_KEY_EVENTS)) {
-                loadFragment(EventsFragment.newInstance());
+
+            if (tab != null) {
+                switch (tab) {
+                    case EXTRA_KEY_EVENTS:
+                        loadFragment(EventsFragment.newInstance());
+                        break;
+                    case EXTRA_KEY_PROGRAMS:
+                        loadFragment(ProgramsFragment.newInstance());
+                        break;
+                    default:
+                        loadFragment(ProgramsFragment.newInstance());
+                        break;
+                }
+            } else {
+                loadFragment(ProgramsFragment.newInstance());
             }
         }
     }
@@ -73,8 +89,20 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onStart()");
         if (getIntent() != null) {
             String tab = getIntent().getStringExtra(EXTRA_KEY);
-            if (tab != null && tab.equals(EXTRA_KEY_EVENTS)) {
-                loadFragment(EventsFragment.newInstance());
+            if (tab != null) {
+                switch (tab) {
+                    case EXTRA_KEY_EVENTS:
+                        loadFragment(EventsFragment.newInstance());
+                        break;
+                    case EXTRA_KEY_PROGRAMS:
+                        loadFragment(ProgramsFragment.newInstance());
+                        break;
+                    default:
+                        loadFragment(ProgramsFragment.newInstance());
+                        break;
+                }
+            } else {
+                loadFragment(ProgramsFragment.newInstance());
             }
         }
     }
@@ -133,19 +161,19 @@ public class MainActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.nav_settings:
-                fragment = SettingsFragment.newInstance(0);
+                fragment = SettingsFragment.newInstance();
                 break;
             case R.id.nav_prog:
-                fragment = ProgramsFragment.newInstance(0);
+                fragment = ProgramsFragment.newInstance();
                 break;
             case R.id.nav_ex:
-                fragment = ExercisesFragment.newInstance(0);
+                fragment = ExercisesFragment.newInstance();
                 break;
             case R.id.nav_events:
                 fragment = EventsFragment.newInstance();
                 break;
             case R.id.nav_recipes:
-                fragment = RecipeFragment.newInstance(0);
+                fragment = RecipeFragment.newInstance();
                 break;
         }
 
@@ -180,6 +208,12 @@ public class MainActivity extends AppCompatActivity
 
         if (mCurrentFragment instanceof RecipeFragment) {
             ((RecipeFragment) mCurrentFragment).add();
+        }
+    }
+
+    public void refreshPrograms(){
+        if (mCurrentFragment instanceof ProgramsFragment) {
+            ((ProgramsFragment) mCurrentFragment).refreshPrograms();
         }
     }
 

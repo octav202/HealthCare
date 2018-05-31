@@ -25,13 +25,9 @@ public class ProgramsFragment extends Fragment {
     private ListView mListView;
     private ProgramsAdapter mAdapter;
     private Context mContext;
-    private int mProgramId;
 
-    public static ProgramsFragment newInstance(int selectedId) {
+    public static ProgramsFragment newInstance() {
         ProgramsFragment fragment = new ProgramsFragment();
-        Bundle args = new Bundle();
-        args.putInt("selectedId", selectedId);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -39,8 +35,6 @@ public class ProgramsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mProgramId = getArguments().getInt("selectedId");
-        Log.d(TAG, "onCreateView() " + mProgramId);
 
         mContext = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.programs_fragment, container, false);
@@ -117,4 +111,9 @@ public class ProgramsFragment extends Fragment {
         }, program).show();
     }
 
+    public void refreshPrograms() {
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
 }

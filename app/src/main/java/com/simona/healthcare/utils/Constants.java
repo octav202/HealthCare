@@ -4,6 +4,7 @@ public class Constants {
     public static final String TAG = "HEALTH_";
     public static final String EXTRA_KEY = "EXTRA_KEY";
     public static final String EXTRA_KEY_EVENTS = "EXTRA_KEY_EVENTS";
+    public static final String EXTRA_KEY_PROGRAMS = "EXTRA_KEY_PROGRAMS";
 
     // Photo Picker
     public static final int GALLERY_INTENT = 1;
@@ -24,5 +25,6 @@ public class Constants {
     public static final String ACTION_WIDGET_PREVIOUS = "com.simona.healthcare.PREV";
     public static final String ACTION_WIDGET_PLAY = "com.simona.healthcare.PLAY";
     public static final String ACTION_WIDGET_NEXT = "com.simona.healthcare.NEXT";
+    public static final String ACTION_WIDGET_SELECT = "com.simona.healthcare.SELECT";
     public static final String SERVICE_ACTION_EXTRA = "service_action_extra";
 }

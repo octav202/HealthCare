@@ -35,6 +35,7 @@
                 <action android:name="com.simona.healthcare.PREV" />
                 <action android:name="com.simona.healthcare.PLAY" />
                 <action android:name="com.simona.healthcare.NEXT" />
+                <action android:name="com.simona.healthcare.SELECT" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
