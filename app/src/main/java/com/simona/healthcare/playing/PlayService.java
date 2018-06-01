@@ -275,32 +275,32 @@ public class PlayService extends Service {
                 case TYPE_TTS_PROGRAM:
                     String text = mContext.getResources().getString(R.string.starting_program) + " "
                             + op.getInfo();
-                    playSound(text);
+                    playSound(text, op.getType());
                     break;
                 case TYPE_TTS_EXERCISE:
-                    playSound(e.getName());
+                    playSound(e.getName(), op.getType());
                     break;
                 case TYPE_TTS_EXERCISE_SETS_AND_REPS:
-                    playSound(op.getInfo());
+                    playSound(op.getInfo(), op.getType());
                     break;
                 case TYPE_TTS_STOP:
-                    playSound(op.getInfo());
+                    playSound(op.getInfo(), op.getType());
                     break;
                 case TYPE_TTS_START:
-                    playSound(op.getInfo());
+                    playSound(op.getInfo(), op.getType());
                     break;
                 case TYPE_TTS_SET:
                     String setNumber = mContext.getResources().getString(R.string.set) + " " + op.getInfo();
-                    playSound(setNumber);
+                    playSound(setNumber, op.getType());
                     break;
                 case TYPE_TTS_REP:
-                    playSound(op.getInfo());
+                    playSound(op.getInfo(), op.getType());
                     break;
                 case TYPE_BREAK_UNIT:
-                    // Update UI
+                    playSound(op.getInfo(), op.getType());
                     break;
                 case TYPE_TTS_PROGRAM_OVER:
-                    playSound(op.getInfo());
+                    playSound(op.getInfo(), op.getType());
                     break;
                 default:
                     break;
@@ -324,16 +324,29 @@ public class PlayService extends Service {
         return null;
     }
 
-    /**
-     * Text to speech - start, stop, exercise name, sets, reps.
-     *
-     * @param text
-     */
-    private void playSound(final String text) {
+
+    private void playSound(final String text, int type) {
         if (Utils.getProgramTTS(mContext)) {
+
+            switch (type) {
+                case TYPE_TTS_REP:
+                    if (!Utils.getRepsTTS(mContext)) {
+                        return;
+                    }
+                    break;
+                case TYPE_BREAK_UNIT:
+                    if (!Utils.getBreakTTS(mContext)) {
+                        return;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
             textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
+
 
     public class LocalBinder extends Binder {
         PlayService getService() {

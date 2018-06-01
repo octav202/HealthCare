@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.simona.healthcare.utils.Constants;
 
+import static com.simona.healthcare.utils.Constants.PREFS_BREAK_TTS_KEY;
 import static com.simona.healthcare.utils.Constants.PREFS_PROGRAM_TTS_KEY;
 import static com.simona.healthcare.utils.Constants.PREFS_REPS_TTS_KEY;
 
@@ -21,7 +22,7 @@ public class Utils {
 
     public static boolean getProgramTTS(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean status = preferences.getBoolean(PREFS_PROGRAM_TTS_KEY, false);
+        Boolean status = preferences.getBoolean(PREFS_PROGRAM_TTS_KEY, true);
         return status;
     }
 
@@ -35,7 +36,21 @@ public class Utils {
 
     public static boolean getRepsTTS(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean status = preferences.getBoolean(PREFS_REPS_TTS_KEY, false);
+        Boolean status = preferences.getBoolean(PREFS_REPS_TTS_KEY, true);
+        return status;
+    }
+
+    // Break TTS
+    public static void setBreakTTS(Context context, boolean status) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(PREFS_BREAK_TTS_KEY, status);
+        editor.apply();
+    }
+
+    public static boolean getBreakTTS(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean status = preferences.getBoolean(PREFS_BREAK_TTS_KEY, true);
         return status;
     }
 

@@ -118,13 +118,14 @@ public class Operation {
                     list.add(new Operation(TYPE_TTS_REP, ONE_SEC, String.valueOf(rep), e));
                 }
 
+                // Stop
+                list.add(new Operation(TYPE_TTS_STOP, TWO_SEC, context.getResources().getString(R.string.stop_tts), e));
+
                 // Break
-                for (int br = 1; br >= e.getBreak(); br++) {
+                for (int br = 1; br <= e.getBreak(); br++) {
                     list.add(new Operation(TYPE_BREAK_UNIT, ONE_SEC, String.valueOf(br), e));
                 }
 
-                // Stop
-                list.add(new Operation(TYPE_TTS_STOP, TWO_SEC, context.getResources().getString(R.string.stop_tts), e));
             }
         }
 

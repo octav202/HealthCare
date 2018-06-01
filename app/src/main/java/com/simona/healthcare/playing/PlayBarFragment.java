@@ -291,7 +291,7 @@ public class PlayBarFragment extends Fragment{
                 break;
             case TYPE_BREAK_UNIT:
                 mBreakText.setVisibility(View.VISIBLE);
-                mElapsedText.setText(String.valueOf(0));
+                mElapsedText.setText(String.valueOf(op.getInfo()));
                 mTotalText.setText(String.valueOf(e.getBreak()));
                 mSeekbar.setMax(e.getBreak());
                 mSeekbar.setProgress(Integer.parseInt(op.getInfo()));

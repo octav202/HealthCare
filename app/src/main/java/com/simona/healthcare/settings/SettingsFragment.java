@@ -20,6 +20,7 @@ public class SettingsFragment extends Fragment {
     private Context mContext;
     private Switch mProgramSwitch;
     private Switch mRepsSwitch;
+    private Switch mBreakSwitch;
 
     public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
@@ -35,9 +36,11 @@ public class SettingsFragment extends Fragment {
 
         mProgramSwitch = view.findViewById(R.id.programTTSSwitch);
         mRepsSwitch = view.findViewById(R.id.repsTTSSwitch);
+        mBreakSwitch = view.findViewById(R.id.breakTTSSwitch);
 
         mProgramSwitch.setChecked(Utils.getProgramTTS(mContext));
         mRepsSwitch.setChecked(Utils.getRepsTTS(mContext));
+        mBreakSwitch.setChecked(Utils.getBreakTTS(mContext));
 
         mProgramSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -52,6 +55,14 @@ public class SettingsFragment extends Fragment {
                 Utils.setRepTTS(mContext, isChecked);
             }
         });
+
+        mBreakSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Utils.setBreakTTS(mContext, isChecked);
+            }
+        });
+
 
         return view;
     }
