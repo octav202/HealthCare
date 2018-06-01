@@ -19,7 +19,12 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="5dp"
             android:textSize="18dp"
-            android:textColor="@android:color/white"/>
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
 
         <!-- Program -->
         <TextView
@@ -30,8 +35,13 @@
             android:layout_alignParentTop="true"
             android:layout_marginEnd="15dp"
             android:layout_marginTop="8dp"
-            android:textSize="16dp"
-            android:textColor="@android:color/white"/>
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
 
 
         <!-- Elapsed Time -->
@@ -43,7 +53,13 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="15dp"
             android:textColor="@android:color/white"
-            android:text="0:00" />
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:text="0:00"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
 
         <!-- Current Rep/Break-->
         <TextView
@@ -54,9 +70,13 @@
             android:layout_centerHorizontal="true"
             android:text="@string/break_text"
             android:visibility="gone"
-            android:textSize="20dp"
+            android:textSize="18dp"
             android:textStyle="bold"
-            android:textColor="@color/colorAccent"/>
+            android:textColor="@android:color/white"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
 
         <!-- Set number-->
         <TextView
@@ -66,10 +86,15 @@
             android:layout_below="@+id/exerciseText"
             android:layout_alignParentStart="true"
             android:layout_centerHorizontal="true"
-            android:textSize="14dp"
-            android:textColor="@android:color/black"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
 
         <!-- Total Time -->
         <TextView
@@ -79,8 +104,14 @@
             android:layout_above="@id/seekBar"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"
+            android:textSize="16dp"
+            android:textStyle="bold"
             android:text="0:30"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
 
         <LinearLayout
             android:id="@+id/controlsLayout"
@@ -134,7 +165,12 @@
             android:layout_centerInParent="true"
             android:text="@string/no_program"
             android:textColor="@android:color/white"
-            android:textSize="20dp" />
+            android:textSize="22dp"
+            android:textStyle="bold"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
     </RelativeLayout>
 
 </RelativeLayout>

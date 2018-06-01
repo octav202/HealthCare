@@ -131,8 +131,6 @@ public class PlayService extends Service {
                         mContext).getExercisesForProgramId(mProgram.getId()));
             }
             startProgram();
-        } else {
-
         }
     }
 
@@ -356,15 +354,17 @@ public class PlayService extends Service {
         // Handle Button States
         switch (mState.get()) {
             case STATE_PAUSED:
+                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_play);
+                remoteViews.setViewVisibility(R.id.noProgramLayout, View.GONE);
+                remoteViews.setViewVisibility(R.id.currentProgramLayout, View.VISIBLE);
+                break;
             case STATE_STOPPED:
                 remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_play);
-
                 remoteViews.setViewVisibility(R.id.noProgramLayout, View.VISIBLE);
                 remoteViews.setViewVisibility(R.id.currentProgramLayout, View.GONE);
                 break;
             case STATE_PLAYING:
                 remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_pause);
-
                 remoteViews.setViewVisibility(R.id.noProgramLayout, View.GONE);
                 remoteViews.setViewVisibility(R.id.currentProgramLayout, View.VISIBLE);
                 break;
@@ -403,9 +403,11 @@ public class PlayService extends Service {
                 case TYPE_TTS_SET:
                     remoteViews.setTextViewText(R.id.setText, ("Set " + operation.getInfo()) + "/" + e.getSets());
                     remoteViews.setTextViewText(R.id.currentRep, "");
+                    remoteViews.setTextViewText(R.id.exerciseText, e.getName());
                     break;
                 case TYPE_TTS_REP:
                     remoteViews.setTextViewText(R.id.currentRep, operation.getInfo() + "/" + e.getRepsPerSet());
+                    remoteViews.setTextViewText(R.id.exerciseText, e.getName());
                     break;
                 case TYPE_BREAK_UNIT:
                     remoteViews.setTextViewText(R.id.exerciseText, mContext.getResources().getString(R.string.break_text));

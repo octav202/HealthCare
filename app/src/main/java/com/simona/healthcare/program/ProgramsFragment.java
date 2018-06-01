@@ -14,13 +14,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.simona.healthcare.R;
+import com.simona.healthcare.utils.Constants;
 import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.List;
 
 public class ProgramsFragment extends Fragment {
 
-    private static final String TAG = "HEALTH_";
+    public static final String TAG = Constants.TAG + ProgramsFragment.class.getSimpleName();
 
     private ListView mListView;
     private ProgramsAdapter mAdapter;
@@ -81,6 +82,14 @@ public class ProgramsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     /**

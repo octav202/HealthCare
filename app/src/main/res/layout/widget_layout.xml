@@ -11,43 +11,42 @@
         android:id="@+id/currentProgramLayout"
         android:visibility="gone">
 
+        <!-- Program -->
+        <TextView
+            android:id="@+id/programText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="8dp"
+            android:textSize="17dp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:text="Program"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
+
         <!-- Exercise -->
         <TextView
             android:id="@+id/exerciseText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_below="@+id/programText"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="5dp"
-            android:textSize="16dp"
-            android:text="Exercise"
-            android:textColor="@android:color/white"/>
-
-        <!-- Program -->
-        <TextView
-            android:id="@+id/programText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="8dp"
-            android:textSize="15dp"
-            android:textColor="@android:color/white"
-            android:text="Program"/>
-
-        <!-- Current Rep/Break-->
-        <TextView
-            android:id="@+id/currentRep"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/setText"
-            android:layout_centerHorizontal="true"
-            android:text="@string/break_text"
-            android:textSize="18dp"
+            android:layout_marginTop="4dp"
+            android:textSize="17dp"
             android:textStyle="bold"
-            android:textColor="@color/colorAccent"/>
+            android:text="Exercise"
+            android:textColor="@android:color/white"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
+
 
         <!-- Set number-->
         <TextView
@@ -56,39 +55,60 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/exerciseText"
             android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:textSize="13dp"
-            android:textColor="@android:color/black"
+            android:textSize="17dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="0dp"
-            android:text="Set 1/5"/>
+            android:layout_marginTop="3dp"
+            android:text="Set 1/5"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
+
+        <!-- Current Rep/Break-->
+        <TextView
+            android:id="@+id/currentRep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/break_text"
+            android:textSize="19dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="5dp"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
 
         <LinearLayout
             android:id="@+id/controlsLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal">
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:layout_marginEnd="0dp">
 
             <ImageView
                 android:id="@+id/prevButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/ic_previous"/>
+                android:layout_marginTop="7dp"
+                android:src="@drawable/ic_previous" />
 
             <ImageView
                 android:id="@+id/playButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_play"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"/>
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:src="@drawable/ic_play" />
 
             <ImageView
                 android:id="@+id/nextButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_marginTop="7dp"
                 android:src="@drawable/ic_next" />
 
         </LinearLayout>
@@ -108,8 +128,13 @@
             android:layout_alignParentTop="true"
             android:text="@string/no_program"
             android:textColor="@android:color/white"
-            android:textSize="18dp"
-            android:layout_marginTop="10dp"/>
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"/>
 
         <Button android:layout_width="wrap_content"
             android:layout_height="wrap_content"
