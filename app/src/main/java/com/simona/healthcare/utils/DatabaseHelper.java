@@ -715,11 +715,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long status = db.insertOrThrow(TABLE_EVENTS, null, values);
 
         if (status < 0) {
-            Log.d(TAG, "addEvent() FAILED");
+            Log.d(TAG, "scheduleEvent() FAILED");
             return false;
         }
 
-        Log.d(TAG, "DB addEvent() " + event);
+        Log.d(TAG, "DB scheduleEvent() " + event);
 
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -727,7 +727,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Schedule notification for event
         if (event.isActive()) {
-            EventManager.getInstance(mContext).addEvent(event);
+            EventManager.getInstance(mContext).scheduleEvent(event);
         }
 
         return true;
@@ -767,7 +767,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Schedule notification for event
         if (event.isActive()) {
             // Add updated event
-            EventManager.getInstance(mContext).addEvent(event);
+            EventManager.getInstance(mContext).scheduleEvent(event);
         }
 
         return true;
@@ -812,15 +812,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)},
                 null, null, null, null);
 
+        Event event = null;
+
         if (cursor != null) {
             cursor.moveToFirst();
+
+            event = new Event();
+            event.setId(cursor.getInt(0));
+            event.setName(cursor.getString(1));
+            event.setDescription(cursor.getString(2));
+            event.setInterval(cursor.getInt(3));
+            event.setActive(cursor.getInt(4) == 1 ? true : false);
+            return event;
         }
-        Event event = new Event();
-        event.setId(cursor.getInt(0));
-        event.setName(cursor.getString(1));
-        event.setDescription(cursor.getString(2));
-        event.setInterval(cursor.getInt(3));
-        event.setActive(cursor.getInt(4) == 1 ? true : false);
 
         cursor.close();
         return event;

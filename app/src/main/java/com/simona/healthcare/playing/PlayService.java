@@ -90,23 +90,24 @@ public class PlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand() " + intent.getStringExtra(SERVICE_ACTION_EXTRA));
-
-        String action = intent.getStringExtra(SERVICE_ACTION_EXTRA);
-
-        if (action != null) {
-            switch (action) {
-                case ACTION_WIDGET_PREVIOUS:
-                    previous();
-                    break;
-                case ACTION_WIDGET_PLAY:
-                    play();
-                    break;
-                case ACTION_WIDGET_NEXT:
-                    next();
-                    break;
-                default:
-                    break;
+        Log.d(TAG, "onStartCommand() ");
+        if (intent != null) {
+            Log.d(TAG, "onStartCommand() " + intent.getStringExtra(SERVICE_ACTION_EXTRA));
+            String action = intent.getStringExtra(SERVICE_ACTION_EXTRA);
+            if (action != null) {
+                switch (action) {
+                    case ACTION_WIDGET_PREVIOUS:
+                        previous();
+                        break;
+                    case ACTION_WIDGET_PLAY:
+                        play();
+                        break;
+                    case ACTION_WIDGET_NEXT:
+                        next();
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 

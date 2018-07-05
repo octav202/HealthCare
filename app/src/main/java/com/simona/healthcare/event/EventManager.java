@@ -33,8 +33,8 @@ public class EventManager {
     /**
      * Schedule Event.
      */
-    public void addEvent(Event event) {
-        Log.d(TAG, "addEvent() " + event);
+    public void scheduleEvent(Event event) {
+        Log.d(TAG, "scheduleEvent() " + event);
         Intent intent = new Intent(mContext, EventReceiver.class);
         intent.putExtra(EXTRA_KEY, event.getId());
         PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, event.getId(), intent, 0);

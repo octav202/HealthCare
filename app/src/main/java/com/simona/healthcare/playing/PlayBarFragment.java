@@ -183,7 +183,11 @@ public class PlayBarFragment extends Fragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mContext.unbindService(mConnection);
+        try {
+            mContext.unbindService(mConnection);
+        } catch (IllegalArgumentException e) {
+
+        }
     }
 
     /**

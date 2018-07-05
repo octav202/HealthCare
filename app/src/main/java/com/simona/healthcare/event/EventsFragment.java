@@ -30,6 +30,7 @@ public class EventsFragment extends Fragment {
     private ListView mListView;
     private EventsAdapter mAdapter;
     private Context mContext;
+    private EditEventDialog mDialog;
 
     public static EventsFragment newInstance() {
         EventsFragment fragment = new EventsFragment();
@@ -68,71 +69,20 @@ public class EventsFragment extends Fragment {
      * Add Event
      */
     public void add() {
-        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        LinearLayout layout= new LinearLayout(getActivity().getApplicationContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
 
-        // Name
-        final EditText nameInput = new EditText(getActivity());
-        nameInput.setHint(R.string.name);
+        if (mDialog != null) {
+            mDialog.dismiss();
+            mDialog = null;
+        }
 
-        // Description
-        final EditText descriptionInput = new EditText(getActivity());
-        descriptionInput.setHint(R.string.description);
-
-        // Interval
-        final EditText intervalInput = new EditText(getActivity());
-        intervalInput.setHint(R.string.interval);
-        intervalInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-
-        // Active
-        final CheckBox activeCheckbox = new CheckBox(getActivity());
-        activeCheckbox.setText(R.string.active);
-
-        layout.addView(nameInput);
-        layout.addView(descriptionInput);
-        layout.addView(intervalInput);
-        layout.addView(activeCheckbox);
-        alert.setView(layout);
-
-        alert.setTitle(R.string.add_event);
-
-        // Ok Button
-        alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                // Collect input
-                String name = nameInput.getText().toString().trim();
-                String description = descriptionInput.getText().toString().trim();
-                Integer interval = Integer.parseInt(intervalInput.getText().toString().trim());
-                Boolean active = activeCheckbox.isChecked();
-
-
-                // Create Event object using the collected input
-                Event event = new Event();
-                event.setName(name);
-                event.setDescription(description);
-                event.setInterval(interval);
-                event.setActive(active);
-
-                // Add event to database
-                if (DatabaseHelper.getInstance(mContext).addEvent(event)) {
-                    // Event was added - refresh adapter
-                    mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
-                } else {
-                    Toast.makeText(mContext, "Adaugare eveniment esuata!", Toast.LENGTH_SHORT).show();
-                }
+        mDialog = new EditEventDialog(getActivity(), new EditEventDialog.AddEventCallback() {
+            @Override
+            public void onEditEventDone() {
+                mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
             }
-        });
+        }, null);
+        mDialog.show();
 
-        // Cancel Button
-        alert.setNegativeButton(R.string.cancel,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-        alert.create().show();
     }
 
     /**
@@ -140,88 +90,19 @@ public class EventsFragment extends Fragment {
      * @param event
      */
     private void edit(final Event event) {
-        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        LinearLayout layout= new LinearLayout(getActivity().getApplicationContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
 
-        // Name
-        final EditText nameInput = new EditText(getActivity());
-        nameInput.setText(event.getName());
+        if (mDialog != null) {
+            mDialog.dismiss();
+            mDialog = null;
+        }
 
-        // Description
-        final EditText descriptionInput = new EditText(getActivity());
-        descriptionInput.setText(event.getDescription());
-
-        // Interval
-        final EditText intervalInput = new EditText(getActivity());
-        intervalInput.setText(String.valueOf(event.getInterval()));
-        intervalInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-
-        // Active
-        final CheckBox activeCheckbox = new CheckBox(getActivity());
-        activeCheckbox.setText(R.string.active);
-        activeCheckbox.setChecked(event.isActive() ? true : false);
-
-        layout.addView(nameInput);
-        layout.addView(descriptionInput);
-        layout.addView(intervalInput);
-        layout.addView(activeCheckbox);
-        alert.setView(layout);
-
-        alert.setTitle(R.string.add_event);
-
-
-        // Ok Button
-        alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                // Collect input
-                String name = nameInput.getText().toString().trim();
-                String description = descriptionInput.getText().toString().trim();
-                Integer interval = Integer.parseInt(intervalInput.getText().toString().trim());
-                Boolean active = activeCheckbox.isChecked();
-
-                // Create Event object using the collected input
-                Event e = new Event();
-                e.setId(e.getId());
-                e.setName(name);
-                e.setDescription(description);
-                e.setInterval(interval);
-                e.setActive(active);
-
-                // Add exercise to database
-                if (DatabaseHelper.getInstance(mContext).updateEvent(e)) {
-                    // Exercise was added - refresh adapter
-                    mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
-                } else {
-                    Toast.makeText(mContext, "Editare eveniment esuata!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        // Delete Button
-        alert.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
+        mDialog = new EditEventDialog(getActivity(), new EditEventDialog.AddEventCallback() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Delete event  from database
-                if (DatabaseHelper.getInstance(mContext).deleteEvent(event)) {
-                    // Exercise was deleted - refresh adapter
-                    mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
-                } else {
-                    Toast.makeText(mContext, "Stergere eveniment esuata!", Toast.LENGTH_SHORT).show();
-                }
+            public void onEditEventDone() {
+                mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
             }
-        });
-
-        // Cancel Button
-        alert.setNeutralButton(R.string.cancel,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-
-        alert.create().show();
+        }, event);
+        mDialog.show();
     }
 
 }

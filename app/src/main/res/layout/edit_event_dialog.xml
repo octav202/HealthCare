@@ -6,18 +6,7 @@
     android:orientation="vertical"
     android:background="@color/title_color">
 
-    <!-- Recipe image -->
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:id="@+id/imageView"
-        android:background="@android:color/transparent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:src="@drawable/ic_photo"/>
-
-    <!-- Name -->
+    <!-- Nume -->
     <EditText
         android:id="@+id/nameTextView"
         android:layout_width="match_parent"
@@ -28,25 +17,12 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="7dp"/>
 
-    <!-- Time -->
-    <EditText
-        android:id="@+id/timeTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/nameTextView"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="7dp"
-        android:layout_marginEnd="5dp"
-        android:hint="@string/time"
-        android:textColor="@android:color/black"
-        android:textSize="16dp" />
-
-    <!-- Description -->
+    <!-- Descriere -->
     <EditText
         android:id="@+id/descriptionTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/timeTextView"
+        android:layout_below="@+id/nameTextView"
         android:layout_marginTop="4dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="5dp"
@@ -54,11 +30,38 @@
         android:textColor="@android:color/black"
         android:textSize="16dp" />
 
+    <!-- Interval -->
+    <EditText
+        android:id="@+id/intervalTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/descriptionTextView"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="5dp"
+        android:hint="@string/interval"
+        android:textColor="@android:color/black"
+        android:textSize="16dp"
+        android:inputType="number"/>
+
+    <!-- Activ -->
+    <CheckBox android:id="@+id/activeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/intervalTextView"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="5dp"
+        android:textColor="@android:color/black"
+        android:textSize="16dp"
+        android:layout_alignParentEnd="true"
+        android:hint="@string/active" />
+
     <LinearLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionTextView"
+        android:layout_below="@+id/activeCheckBox"
         android:orientation="horizontal"
         android:weightSum="3"
         android:layout_marginTop="10dp">

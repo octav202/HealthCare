@@ -63,7 +63,11 @@ public class EventsAdapter extends BaseAdapter {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 event.setActive(isChecked);
-                DatabaseHelper.getInstance(mContext).updateEvent(event);
+
+                Event ev = DatabaseHelper.getInstance(mContext).getEventForId(event.getId());
+                if (ev != null && ev.isActive() != isChecked) {
+                    DatabaseHelper.getInstance(mContext).updateEvent(event);
+                }
             }
         });
 
