@@ -3,33 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <item android:title="Workout">
+    <item android:title="Antrenament">
         <menu>
             <item
                 android:id="@+id/nav_prog"
-                android:title="Programs" />
+                android:title="Programe" />
             <item
                 android:id="@+id/nav_ex"
-                android:title="Exercises" />
+                android:title="Exercitii" />
         </menu>
     </item>
 
-    <item android:title="Health">
+    <item android:title="Sanatate">
         <menu>
             <item
                 android:id="@+id/nav_events"
-                android:title="Events" />
+                android:title="Evenimente" />
             <item
                 android:id="@+id/nav_recipes"
-                android:title="Recipes" />
+                android:title="Retete" />
         </menu>
     </item>
 
-    <item android:title="Settings">
+    <item android:title="Setari">
         <menu>
             <item
                 android:id="@+id/nav_settings"
-                android:title="Settings" />
+                android:title="Setari" />
         </menu>
     </item>
 

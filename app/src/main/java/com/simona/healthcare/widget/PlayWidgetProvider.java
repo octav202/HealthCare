@@ -54,7 +54,7 @@ public class PlayWidgetProvider extends AppWidgetProvider {
             PendingIntent nextPending = PendingIntent.getBroadcast(context, 0, next, 0);
             remoteViews.setOnClickPendingIntent(R.id.nextButton, nextPending);
 
-            // Next Button
+            // Select Button
             Intent select = new Intent(context, PlayWidgetProvider.class);
             select.setAction(ACTION_WIDGET_SELECT);
             PendingIntent selectPending = PendingIntent.getBroadcast(context, 0, select, 0);
@@ -81,7 +81,6 @@ public class PlayWidgetProvider extends AppWidgetProvider {
                 context.startService(serviceIntent);
                 break;
             case ACTION_WIDGET_SELECT:
-                // Go to events when user taps on notification.
                 Intent i = new Intent(context, MainActivity.class);
                 i.putExtra(EXTRA_KEY, EXTRA_KEY_PROGRAMS);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

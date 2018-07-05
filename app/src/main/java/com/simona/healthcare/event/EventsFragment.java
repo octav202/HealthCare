@@ -107,6 +107,7 @@ public class EventsFragment extends Fragment {
                 Integer interval = Integer.parseInt(intervalInput.getText().toString().trim());
                 Boolean active = activeCheckbox.isChecked();
 
+
                 // Create Event object using the collected input
                 Event event = new Event();
                 event.setName(name);
@@ -119,7 +120,7 @@ public class EventsFragment extends Fragment {
                     // Event was added - refresh adapter
                     mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
                 } else {
-                    Toast.makeText(mContext, "Add Event Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Adaugare eveniment esuata!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -193,7 +194,7 @@ public class EventsFragment extends Fragment {
                     // Exercise was added - refresh adapter
                     mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
                 } else {
-                    Toast.makeText(mContext, "Update Event Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Editare eveniment esuata!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -207,7 +208,7 @@ public class EventsFragment extends Fragment {
                     // Exercise was deleted - refresh adapter
                     mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
                 } else {
-                    Toast.makeText(mContext, "Delete event Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Stergere eveniment esuata!", Toast.LENGTH_SHORT).show();
                 }
             }
         });

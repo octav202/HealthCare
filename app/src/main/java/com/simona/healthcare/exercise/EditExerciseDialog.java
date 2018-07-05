@@ -70,8 +70,9 @@ public class EditExerciseDialog extends Dialog {
                 String breakDuration = mBreakText.getText().toString().trim();
                 String description = mDescriptionText.getText().toString().trim();
 
-                if (name == null || name.isEmpty()) {
-                    Toast.makeText(context, "Please enter an exercise name..", Toast.LENGTH_SHORT)
+                if (name == null || name.isEmpty() || sets == null || sets.isEmpty() || reps == null || reps.isEmpty()
+                    || breakDuration == null || breakDuration.isEmpty() || description == null || description.isEmpty()) {
+                    Toast.makeText(context, "Completati toate campurile, va rog!", Toast.LENGTH_SHORT)
                             .show();
                     return;
                 }
@@ -97,13 +98,13 @@ public class EditExerciseDialog extends Dialog {
                     if (DatabaseHelper.getInstance(context).updateExercise(ex)) {
                         mCallback.onExerciseEditDone();
                     } else {
-                        Toast.makeText(context, "Update Exercise Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Editare exercitiu esuata!", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     if (DatabaseHelper.getInstance(context).addExercise(ex)) {
                         mCallback.onExerciseEditDone();
                     } else {
-                        Toast.makeText(context, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Adaugare exercitiu esuata!", Toast.LENGTH_SHORT).show();
                     }
                 }
                 dismiss();
@@ -125,7 +126,7 @@ public class EditExerciseDialog extends Dialog {
                     // Refresh List
                     mCallback.onExerciseEditDone();
                 } else {
-                    Toast.makeText(mContext, "Delete Exercise Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Stergere exercitiu esuata!", Toast.LENGTH_SHORT).show();
                 }
 
                 dismiss();

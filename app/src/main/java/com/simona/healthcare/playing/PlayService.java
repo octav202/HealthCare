@@ -82,7 +82,7 @@ public class PlayService extends Service {
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR) {
                     textToSpeech.setLanguage(Locale.US);
-                    textToSpeech.setSpeechRate(0.8f);
+                    textToSpeech.setSpeechRate(0.9f);
                 }
             }
         });

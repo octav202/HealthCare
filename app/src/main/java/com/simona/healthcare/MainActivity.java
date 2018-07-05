@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.simona.healthcare.category.CategoriesFragment;
 import com.simona.healthcare.event.EventsFragment;
 import com.simona.healthcare.exercise.ExercisesFragment;
 import com.simona.healthcare.playing.PlayBarFragment;
@@ -133,15 +132,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+
+        MenuItem item = menu.findItem(R.id.add);
+        if (mCurrentFragment instanceof SettingsFragment) {
+            item.setVisible(false);
+        } else {
+            item.setVisible(true);
+        }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (mCurrentFragment instanceof ExercisesFragment) {
-
-        }
 
         // Handle item selection
         switch (item.getItemId()) {
@@ -185,6 +188,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void loadFragment(Fragment fragment) {
+        invalidateOptionsMenu();
         mCurrentFragment = fragment;
         getFragmentManager().beginTransaction().replace(R.id.mainContent, fragment).commit();
     }
@@ -192,10 +196,6 @@ public class MainActivity extends AppCompatActivity
     private void add() {
         if (mCurrentFragment instanceof ExercisesFragment) {
             ((ExercisesFragment) mCurrentFragment).add();
-        }
-
-        if (mCurrentFragment instanceof CategoriesFragment) {
-            ((CategoriesFragment) mCurrentFragment).add();
         }
 
         if (mCurrentFragment instanceof ProgramsFragment) {

@@ -65,8 +65,8 @@ public class EditRecipeDialog extends Dialog {
                 String time = mTimeText.getText().toString();
                 String description = mDescriptionText.getText().toString();
 
-                if (name == null || name.isEmpty()) {
-                    Toast.makeText(context, "Please enter a program name..", Toast.LENGTH_SHORT)
+                if (name == null || name.isEmpty() || time == null || time.isEmpty() || description == null || description.isEmpty()) {
+                    Toast.makeText(context, "Completati toate campurile, va rog!", Toast.LENGTH_SHORT)
                             .show();
                     return;
                 }
@@ -87,13 +87,13 @@ public class EditRecipeDialog extends Dialog {
                     if (DatabaseHelper.getInstance(context).updateRecipe(recipe)) {
                         mCallback.onRecipeEditDone();
                     } else {
-                        Toast.makeText(context, "Update Recipe Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Editare reteta esuata!", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     if (DatabaseHelper.getInstance(context).addRecipe(recipe)) {
                         mCallback.onRecipeEditDone();
                     } else {
-                        Toast.makeText(context, "Add Recipe Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Adaugare reteta esuata!", Toast.LENGTH_SHORT).show();
                     }
                 }
                 dismiss();
@@ -115,7 +115,7 @@ public class EditRecipeDialog extends Dialog {
                     // Refresh List
                     mCallback.onRecipeEditDone();
                 } else {
-                    Toast.makeText(mContext, "Delete Recipe Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Stergere reteta esuata!", Toast.LENGTH_SHORT).show();
                 }
 
                 dismiss();

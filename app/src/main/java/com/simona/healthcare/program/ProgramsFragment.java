@@ -43,14 +43,14 @@ public class ProgramsFragment extends Fragment {
 
 
         TabLayout tabLayout = (TabLayout)view.findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Mo"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tu"));
-        tabLayout.addTab(tabLayout.newTab().setText("We"));
-        tabLayout.addTab(tabLayout.newTab().setText("Th"));
-        tabLayout.addTab(tabLayout.newTab().setText("Fr"));
+        tabLayout.addTab(tabLayout.newTab().setText("Lu"));
+        tabLayout.addTab(tabLayout.newTab().setText("Ma"));
+        tabLayout.addTab(tabLayout.newTab().setText("Mi"));
+        tabLayout.addTab(tabLayout.newTab().setText("Jo"));
+        tabLayout.addTab(tabLayout.newTab().setText("Vi"));
         tabLayout.addTab(tabLayout.newTab().setText("Sa"));
-        tabLayout.addTab(tabLayout.newTab().setText("Su"));
-        tabLayout.addTab(tabLayout.newTab().setText("All"));
+        tabLayout.addTab(tabLayout.newTab().setText("Du"));
+        tabLayout.addTab(tabLayout.newTab().setText("*"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

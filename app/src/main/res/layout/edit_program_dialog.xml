@@ -74,7 +74,7 @@
             android:layout_weight="1"
             android:background="@drawable/day_button_selector"
             android:tag="1"
-            android:text="Mo"
+            android:text="Lu"
             android:textSize="10dp" />
 
         <!-- Tuesday -->
@@ -86,7 +86,7 @@
             android:layout_weight="1"
             android:background="@drawable/day_button_selector"
             android:tag="2"
-            android:text="Tu"
+            android:text="Ma"
             android:textSize="10dp" />
 
         <!-- Wednesday -->
@@ -98,7 +98,7 @@
             android:layout_weight="1"
             android:background="@drawable/day_button_selector"
             android:tag="3"
-            android:text="We"
+            android:text="Mi"
             android:textSize="10dp" />
 
         <!-- Thursday -->
@@ -110,7 +110,7 @@
             android:layout_weight="1"
             android:background="@drawable/day_button_selector"
             android:tag="4"
-            android:text="Th"
+            android:text="Jo"
             android:textSize="10dp" />
 
         <!-- Friday -->
@@ -122,7 +122,7 @@
             android:layout_weight="1"
             android:background="@drawable/day_button_selector"
             android:tag="5"
-            android:text="Fr"
+            android:text="Vi"
             android:textSize="10dp" />
 
         <!-- Satuday -->
@@ -147,7 +147,7 @@
             android:layout_weight="1"
             android:background="@drawable/day_button_selector"
             android:tag="7"
-            android:text="Su"
+            android:text="Du"
             android:textSize="10dp" />
     </LinearLayout>
 

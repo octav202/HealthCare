@@ -72,7 +72,7 @@ public class EditProgramDialog extends Dialog {
                 // Program Name
                 String name = mNameText.getText().toString();
                 if (name == null || name.isEmpty()) {
-                    Toast.makeText(context, "Please enter a program name..", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, "Introduceti va rog numele programului", Toast.LENGTH_SHORT)
                             .show();
                     return;
                 }
@@ -92,7 +92,7 @@ public class EditProgramDialog extends Dialog {
                         // Refresh List
                         mCallback.onProgramEditDone();
                     } else {
-                        Toast.makeText(mContext, "Update Program Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Editare program esuata!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
@@ -108,7 +108,7 @@ public class EditProgramDialog extends Dialog {
                 if (DatabaseHelper.getInstance(context).addProgram(prog)) {
                     mCallback.onProgramEditDone();
                 } else {
-                    Toast.makeText(context, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Adaugare program esuata!", Toast.LENGTH_SHORT).show();
                 }
 
                 dismiss();
@@ -130,7 +130,7 @@ public class EditProgramDialog extends Dialog {
                     // Refresh List
                     mCallback.onProgramEditDone();
                 } else {
-                    Toast.makeText(mContext, "Add Exercise Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Stergere program esuata!", Toast.LENGTH_SHORT).show();
                 }
 
                 dismiss();
