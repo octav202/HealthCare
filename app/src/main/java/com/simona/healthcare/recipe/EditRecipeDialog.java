@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -35,6 +36,12 @@ public class EditRecipeDialog extends Dialog {
 
     public EditRecipeDialog(final Context context, AddRecipeCallback callback, final Recipe recipeToEdit) {
         super(context, R.style.Theme_AppCompat_Light_Dialog);
+
+        // Set transparent background - used for rounded corners shape
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View v = getWindow().getDecorView();
+        v.setBackgroundResource(android.R.color.transparent);
+
         this.setContentView(R.layout.edit_recipe_dialog);
 
         mContext = context;

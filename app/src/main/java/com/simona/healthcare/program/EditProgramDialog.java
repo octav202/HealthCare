@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -43,6 +44,12 @@ public class EditProgramDialog extends Dialog {
 
     public EditProgramDialog(final Context context, AddProgramDialogCallback callback, final Program programToEdit) {
         super(context, R.style.Theme_AppCompat_Light_Dialog);
+
+        // Set transparent background - used for rounded corners shape
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View v = getWindow().getDecorView();
+        v.setBackgroundResource(android.R.color.transparent);
+
         this.setContentView(R.layout.edit_program_dialog);
 
         mContext = context;

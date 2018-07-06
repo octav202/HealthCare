@@ -3,6 +3,7 @@ package com.simona.healthcare.event;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -28,6 +29,12 @@ public class EditEventDialog extends Dialog {
 
     public EditEventDialog(final Context context, AddEventCallback callback, final Event eventToEdit) {
         super(context, R.style.Theme_AppCompat_Light_Dialog);
+
+        // Set transparent background - used for rounded corners shape
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View v = getWindow().getDecorView();
+        v.setBackgroundResource(android.R.color.transparent);
+
         this.setContentView(R.layout.edit_event_dialog);
 
         mContext = context;

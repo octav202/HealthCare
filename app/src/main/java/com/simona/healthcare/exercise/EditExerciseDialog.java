@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,6 +37,12 @@ public class EditExerciseDialog extends Dialog {
 
     public EditExerciseDialog(final Context context, AddExerciseCallback callback, final Exercise exerciseToEdit) {
         super(context, R.style.Theme_AppCompat_Light_Dialog);
+
+        // Set transparent background - used for rounded corners shape
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View v = getWindow().getDecorView();
+        v.setBackgroundResource(android.R.color.transparent);
+
         this.setContentView(R.layout.edit_exercise_dialog);
 
         mContext = context;
