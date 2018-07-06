@@ -83,7 +83,7 @@ public class PlayWidgetProvider extends AppWidgetProvider {
             case ACTION_WIDGET_SELECT:
                 Intent i = new Intent(context, MainActivity.class);
                 i.putExtra(EXTRA_KEY, EXTRA_KEY_PROGRAMS);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             default:
                 break;
