@@ -3,12 +3,9 @@
     <color name="colorPrimary">#FF7A65</color>
     <color name="colorPrimaryDark">#CD5B45</color>
     <color name="colorAccent">#53CCB1</color>
-
     <color name="title_color">#E7E7E7</color>
-
     <color name="activity_background">#FFFFFF</color>
     <color name="list_item_background">#80003133</color>
     <color name="play_bar_background">#FF7A65</color>
-
     <color name="widget_background">#A6FF7A65</color>
 </resources>

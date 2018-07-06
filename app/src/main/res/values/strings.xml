@@ -38,6 +38,8 @@
     <string name="exercise_tts">%d sets of %d reps</string>
     <string name="start_tts">Start</string>
     <string name="stop_tts">Stop</string>
+    <string name="language">Limba</string>
+    <string name="pitch">Frecventa voce</string>
 
     <!-- Settings -->
     <string name="workout">Workout</string>
@@ -52,5 +54,6 @@
     <string name="no_exercise">Niciun exercitiu</string>
     <string name="no_event">Niciun eveniment</string>
     <string name="no_recipe">Nicio reteta</string>
+
 
 </resources>

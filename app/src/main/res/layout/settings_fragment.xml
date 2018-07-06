@@ -9,15 +9,19 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:text="@string/tts"
+        android:textSize="17dp"
         android:textColor="@color/list_item_background"
-        android:textSize="16dp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:shadowColor="@android:color/darker_gray"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
 
     <!-- Program TTS-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_margin="15dp"
         android:orientation="horizontal">
 
         <TextView
@@ -26,22 +30,31 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="15dp"
             android:text="@string/program_tts"
-            android:textSize="14dp" />
+            android:textSize="16dp"
+            android:textColor="@color/list_item_background"
+            android:textStyle="bold"
+            />
+
+        <View android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <Switch
             android:id="@+id/programTTSSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp" />
-
     </LinearLayout>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
     <!-- Reps TTS-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
+        android:layout_margin="15dp"
         android:orientation="horizontal">
 
         <TextView
@@ -50,22 +63,30 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="15dp"
             android:text="@string/reps_tts"
-            android:textSize="14dp" />
+            android:textSize="16dp"
+            android:textColor="@color/list_item_background"
+            android:textStyle="bold"/>
+
+        <View android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <Switch
             android:id="@+id/repsTTSSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp" />
-
     </LinearLayout>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
     <!-- Break TTS-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
+        android:layout_margin="15dp"
         android:orientation="horizontal">
 
         <TextView
@@ -74,14 +95,82 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="15dp"
             android:text="@string/break_text"
-            android:textSize="14dp" />
+            android:textSize="16dp"
+            android:textColor="@color/list_item_background"
+            android:textStyle="bold"/>
+
+        <View android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <Switch
             android:id="@+id/breakTTSSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp" />
-
     </LinearLayout>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <!-- Language TTS-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="15dp"
+            android:text="@string/language"
+            android:textSize="16dp"
+            android:textColor="@color/list_item_background"
+            android:textStyle="bold"/>
+
+        <View android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <Spinner
+            android:id="@+id/langSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <!-- Pitch TTS-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="15dp"
+            android:text="@string/pitch"
+            android:textSize="16dp"
+            android:textColor="@color/list_item_background"
+            android:textStyle="bold"/>
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:max="10"
+            android:id="@+id/pitchBar"/>
+    </LinearLayout>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
 </LinearLayout>

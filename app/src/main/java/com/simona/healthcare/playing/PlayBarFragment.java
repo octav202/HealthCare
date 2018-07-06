@@ -1,6 +1,5 @@
 package com.simona.healthcare.playing;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,7 +23,7 @@ import com.simona.healthcare.exercise.Exercise;
 import com.simona.healthcare.program.Program;
 import com.simona.healthcare.utils.Constants;
 
-import java.util.concurrent.ExecutorService;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.simona.healthcare.playing.Operation.TYPE_BREAK_UNIT;
@@ -39,7 +38,6 @@ import static com.simona.healthcare.playing.Operation.TYPE_TTS_STOP;
 import static com.simona.healthcare.utils.Constants.STATE_PAUSED;
 import static com.simona.healthcare.utils.Constants.STATE_PLAYING;
 import static com.simona.healthcare.utils.Constants.STATE_STOPPED;
-import static com.simona.healthcare.utils.Constants.TAG;
 
 
 public class PlayBarFragment extends Fragment{
@@ -316,5 +314,17 @@ public class PlayBarFragment extends Fragment{
                 break;
         }
 
+    }
+
+    public void setLanguage(Locale locale) {
+        if (mService != null) {
+            mService.setLanguage(locale);
+        }
+    }
+
+    public void setPitch(float pitch) {
+        if (mService != null) {
+            mService.setPitch(pitch);
+        }
     }
 }

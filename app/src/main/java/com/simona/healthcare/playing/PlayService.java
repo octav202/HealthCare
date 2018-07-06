@@ -77,12 +77,19 @@ public class PlayService extends Service {
         mContext = getApplicationContext();
         mHandler = new Handler();
 
-        textToSpeech=new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
+        textToSpeech = new TextToSpeech(mContext, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if(status != TextToSpeech.ERROR) {
-                    textToSpeech.setLanguage(Locale.US);
-                    textToSpeech.setSpeechRate(0.9f);
+                if (status != TextToSpeech.ERROR) {
+
+                    // Get language
+                    String lang = Utils.getLanguageTTS(mContext);
+                    Locale locale = Utils.stringToLocale(lang);
+                    textToSpeech.setLanguage(locale);
+
+                    // Get pitch
+                    float pitch = Utils.getPitchTTS(mContext);
+                    textToSpeech.setPitch(pitch/10);
                 }
             }
         });
@@ -112,6 +119,16 @@ public class PlayService extends Service {
         }
 
         return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+        }
+
+        stopProgram();
     }
 
     /**
@@ -442,5 +459,20 @@ public class PlayService extends Service {
         if (operation != null && operation.getType() == TYPE_TTS_PROGRAM_OVER) {
             stopSelf();
         }
+    }
+
+    public void setLanguage(Locale locale) {
+        Log.d(TAG, "setLanguage() " + locale);
+        textToSpeech.setLanguage(locale);
+    }
+
+    /**
+     * Stored pitch has value range 1-10
+     * Must be converted to 0.1f - 1.f
+     * @param pitch
+     */
+    public void setPitch(float pitch) {
+        Log.d(TAG, "setPitch() " + pitch/10);
+        textToSpeech.setPitch(pitch/10);
     }
 }
