@@ -5,13 +5,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.simona.healthcare.R;
 import com.simona.healthcare.utils.Constants;
@@ -26,6 +25,7 @@ public class ProgramsFragment extends Fragment {
     private ListView mListView;
     private ProgramsAdapter mAdapter;
     private Context mContext;
+    private TextView mNoProgramText;
 
     public static ProgramsFragment newInstance() {
         ProgramsFragment fragment = new ProgramsFragment();
@@ -40,7 +40,7 @@ public class ProgramsFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.programs_fragment, container, false);
         mListView = view.findViewById(R.id.programsList);
-
+        mNoProgramText = view.findViewById(R.id.no_program_text);
 
         TabLayout tabLayout = (TabLayout)view.findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Lu"));
@@ -69,6 +69,14 @@ public class ProgramsFragment extends Fragment {
         });
 
         List<Program> programs = DatabaseHelper.getInstance(mContext).getPrograms();
+
+        if (programs == null || programs.isEmpty()) {
+            mNoProgramText.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        } else {
+            mNoProgramText.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+        }
 
         mAdapter = new ProgramsAdapter(mContext, programs);
         mListView.setAdapter(mAdapter);
@@ -101,6 +109,13 @@ public class ProgramsFragment extends Fragment {
             public void onProgramEditDone() {
                 // Program added, update list
                 List<Program> programs = DatabaseHelper.getInstance(mContext).getPrograms();
+                if (programs == null || programs.isEmpty()) {
+                    mNoProgramText.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                } else {
+                    mNoProgramText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                }
                 mAdapter.setData(programs);
             }
         }, null).show();
@@ -115,6 +130,13 @@ public class ProgramsFragment extends Fragment {
             public void onProgramEditDone() {
                 // Program added, update list
                 List<Program> programs = DatabaseHelper.getInstance(mContext).getPrograms();
+                if (programs == null || programs.isEmpty()) {
+                    mNoProgramText.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                } else {
+                    mNoProgramText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                }
                 mAdapter.setData(programs);
             }
         }, program).show();

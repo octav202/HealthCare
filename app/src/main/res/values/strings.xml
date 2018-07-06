@@ -48,4 +48,9 @@
 
     <string name="select_program">Selecteaza Program</string>
 
+    <string name="no_programs">Niciun program</string>
+    <string name="no_exercise">Niciun exercitiu</string>
+    <string name="no_event">Niciun eveniment</string>
+    <string name="no_recipe">Nicio reteta</string>
+
 </resources>

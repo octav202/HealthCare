@@ -1,22 +1,16 @@
 package com.simona.healthcare.event;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.simona.healthcare.R;
 import com.simona.healthcare.utils.DatabaseHelper;
@@ -31,6 +25,7 @@ public class EventsFragment extends Fragment {
     private EventsAdapter mAdapter;
     private Context mContext;
     private EditEventDialog mDialog;
+    private TextView mNoEventText;
 
     public static EventsFragment newInstance() {
         EventsFragment fragment = new EventsFragment();
@@ -45,12 +40,21 @@ public class EventsFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.events_fragment, container, false);
         mListView = view.findViewById(R.id.eventsList);
+        mNoEventText = view.findViewById(R.id.no_event_text);
 
         // Get all events from database
-        List<Event> mExercises = DatabaseHelper.getInstance(mContext).getEvents();
+        List<Event> events = DatabaseHelper.getInstance(mContext).getEvents();
+
+        if (events == null || events.isEmpty()) {
+            mNoEventText.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        } else {
+            mNoEventText.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+        }
 
         // Load fetched events
-        mAdapter = new EventsAdapter(mContext, mExercises);
+        mAdapter = new EventsAdapter(mContext, events);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -78,7 +82,18 @@ public class EventsFragment extends Fragment {
         mDialog = new EditEventDialog(getActivity(), new EditEventDialog.AddEventCallback() {
             @Override
             public void onEditEventDone() {
-                mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
+
+                List<Event> events = DatabaseHelper.getInstance(mContext).getEvents();
+
+                mAdapter.setData(events);
+
+                if (events == null || events.isEmpty()) {
+                    mNoEventText.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                } else {
+                    mNoEventText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                }
             }
         }, null);
         mDialog.show();
@@ -99,7 +114,17 @@ public class EventsFragment extends Fragment {
         mDialog = new EditEventDialog(getActivity(), new EditEventDialog.AddEventCallback() {
             @Override
             public void onEditEventDone() {
-                mAdapter.setData(DatabaseHelper.getInstance(mContext).getEvents());
+                List<Event> events = DatabaseHelper.getInstance(mContext).getEvents();
+
+                mAdapter.setData(events);
+
+                if (events == null || events.isEmpty()) {
+                    mNoEventText.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                } else {
+                    mNoEventText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                }
             }
         }, event);
         mDialog.show();

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
@@ -27,6 +28,7 @@ public class RecipeFragment extends Fragment {
     private RecipesAdapter mAdapter;
     private Context mContext;
     private EditRecipeDialog mDialog;
+    private TextView mNoRecipeText;
 
     public static RecipeFragment newInstance() {
         RecipeFragment fragment = new RecipeFragment();
@@ -40,9 +42,17 @@ public class RecipeFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.recipes_fragment, container, false);
         mListView = view.findViewById(R.id.recipesList);
+        mNoRecipeText = view.findViewById(R.id.no_recipe_text);
 
         // Get all recipes rom database
         List<Recipe> recipes = DatabaseHelper.getInstance(mContext).getRecipes();
+        if (recipes == null || recipes.isEmpty()) {
+            mNoRecipeText.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        } else {
+            mNoRecipeText.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+        }
 
         // Load fetched recipes
         mAdapter = new RecipesAdapter(mContext, recipes);
@@ -75,6 +85,13 @@ public class RecipeFragment extends Fragment {
             public void onRecipeEditDone() {
                 // Program added, update list
                 List<Recipe> recipes = DatabaseHelper.getInstance(mContext).getRecipes();
+                if (recipes == null || recipes.isEmpty()) {
+                    mNoRecipeText.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                } else {
+                    mNoRecipeText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                }
                 mAdapter.setData(recipes);
             }
 
@@ -101,6 +118,13 @@ public class RecipeFragment extends Fragment {
             @Override
             public void onRecipeEditDone() {
                 List<Recipe> recipes = DatabaseHelper.getInstance(mContext).getRecipes();
+                if (recipes == null || recipes.isEmpty()) {
+                    mNoRecipeText.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                } else {
+                    mNoRecipeText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                }
                 mAdapter.setData(recipes);
             }
 
@@ -117,15 +141,6 @@ public class RecipeFragment extends Fragment {
     public void setDialogImageUri(Uri imageUri) {
         if (mDialog != null) {
             mDialog.setImageUri(imageUri);
-        }
-    }
-
-    /**
-     * Called from the activity after an image was stored for an exercise
-     */
-    public void updateAdapter() {
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
         }
     }
 }

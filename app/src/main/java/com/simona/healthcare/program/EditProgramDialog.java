@@ -2,12 +2,12 @@ package com.simona.healthcare.program;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.simona.healthcare.R;
@@ -16,6 +16,7 @@ import com.simona.healthcare.utils.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.simona.healthcare.utils.Constants.TAG;
 
 public class EditProgramDialog extends Dialog {
@@ -25,6 +26,7 @@ public class EditProgramDialog extends Dialog {
     private EditText mNameText;
     private ListView mListView;
     private ProgramExercisesAdapter mAdapter;
+    private TextView mNoExerciseText;
     private Button mCancelBtn;
     private Button mOkBtn;
     private Button mDeleteButton;
@@ -47,6 +49,7 @@ public class EditProgramDialog extends Dialog {
         mCallback = callback;
         mNameText = findViewById(R.id.programNameText);
         mListView = findViewById(R.id.addExerciseList);
+        mNoExerciseText = findViewById(R.id.no_exercise_text);
         mCancelBtn = findViewById(R.id.cancelButton);
         mOkBtn = findViewById(R.id.okButton);
         mDeleteButton = findViewById(R.id.deleteButton);
@@ -62,8 +65,17 @@ public class EditProgramDialog extends Dialog {
         initButtonListeners();
 
         // Get all exercises from database
-        List<Exercise> mExercises = DatabaseHelper.getInstance(context).getExercises();
-        mAdapter = new ProgramExercisesAdapter(context, mExercises);
+        List<Exercise> exercises = DatabaseHelper.getInstance(context).getExercises();
+
+        if (exercises == null || exercises.isEmpty()) {
+            mNoExerciseText.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        } else {
+            mNoExerciseText.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+        }
+
+        mAdapter = new ProgramExercisesAdapter(context, exercises);
         mListView.setAdapter(mAdapter);
 
         mOkBtn.setOnClickListener(new View.OnClickListener() {
@@ -143,9 +155,9 @@ public class EditProgramDialog extends Dialog {
             mNameText.setText(programToEdit.getName());
 
             // Get Exercises for current program
-            List<Exercise> exercises = DatabaseHelper.getInstance(mContext).
+            List<Exercise> selectedExercises = DatabaseHelper.getInstance(mContext).
                     getExercisesForProgramId(programToEdit.getId());
-            mAdapter.setSelectedItems(exercises);
+            mAdapter.setSelectedItems(selectedExercises);
 
             // Get Days for current program
             List<Integer> days = DatabaseHelper.getInstance(mContext).

@@ -5,12 +5,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.simona.healthcare.MainActivity;
 import com.simona.healthcare.R;
@@ -28,6 +28,7 @@ public class ExercisesFragment extends Fragment {
     private ExercisesAdapter mAdapter;
     private Context mContext;
     private EditExerciseDialog mDialog;
+    private TextView mNoExerciseText;
 
     public static ExercisesFragment newInstance() {
         ExercisesFragment fragment = new ExercisesFragment();
@@ -41,12 +42,21 @@ public class ExercisesFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.exercises_fragment, container, false);
         mListView = view.findViewById(R.id.exercisesList);
+        mNoExerciseText = view.findViewById(R.id.no_exercise_text);
 
         // Get all exercises from database
-        List<Exercise> mExercises = DatabaseHelper.getInstance(mContext).getExercises();
+        List<Exercise> exercises = DatabaseHelper.getInstance(mContext).getExercises();
+
+        if (exercises == null || exercises.isEmpty()) {
+            mNoExerciseText.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        } else {
+            mNoExerciseText.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+        }
 
         // Load fetched exercises
-        mAdapter = new ExercisesAdapter(mContext, mExercises);
+        mAdapter = new ExercisesAdapter(mContext, exercises);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -75,8 +85,16 @@ public class ExercisesFragment extends Fragment {
         mDialog = new EditExerciseDialog(getActivity(), new EditExerciseDialog.AddExerciseCallback() {
             @Override
             public void onExerciseEditDone() {
-                List<Exercise> recipes = DatabaseHelper.getInstance(mContext).getExercises();
-                mAdapter.setData(recipes);
+                List<Exercise> exercises = DatabaseHelper.getInstance(mContext).getExercises();
+
+                if (exercises == null || exercises.isEmpty()) {
+                    mNoExerciseText.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                } else {
+                    mNoExerciseText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                }
+                mAdapter.setData(exercises);
             }
 
             @Override
@@ -101,8 +119,16 @@ public class ExercisesFragment extends Fragment {
         mDialog = new EditExerciseDialog(getActivity(), new EditExerciseDialog.AddExerciseCallback() {
             @Override
             public void onExerciseEditDone() {
-                List<Exercise> recipes = DatabaseHelper.getInstance(mContext).getExercises();
-                mAdapter.setData(recipes);
+                List<Exercise> exercises = DatabaseHelper.getInstance(mContext).getExercises();
+
+                if (exercises == null || exercises.isEmpty()) {
+                    mNoExerciseText.setVisibility(View.VISIBLE);
+                    mListView.setVisibility(View.GONE);
+                } else {
+                    mNoExerciseText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.VISIBLE);
+                }
+                mAdapter.setData(exercises);
             }
 
             @Override
@@ -118,15 +144,6 @@ public class ExercisesFragment extends Fragment {
     public void setDialogImageUri(Uri imageUri) {
         if (mDialog != null) {
             mDialog.setImageUri(imageUri);
-        }
-    }
-
-    /**
-     * Called from the activity after an image was stored for an exercise
-     */
-    public void updateAdapter() {
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
         }
     }
 }
