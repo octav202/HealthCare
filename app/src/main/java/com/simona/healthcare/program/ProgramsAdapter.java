@@ -78,7 +78,7 @@ public class ProgramsAdapter extends BaseAdapter {
 
         Program playing = PlayBarFragment.getInstance().getProgram();
         if (playing !=null && playing.getId() == program.getId()) {
-            holder.playButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_pause));
+            holder.playButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_stop));
         } else {
             holder.playButton.setBackground(mContext.getResources().getDrawable(R.drawable.ic_play));
         }
@@ -115,7 +115,7 @@ public class ProgramsAdapter extends BaseAdapter {
         Log.d(TAG, "filterByDay() : " + day);
         mFilteredPrograms.clear();
 
-        if (day <8) {
+        if (day < 8) {
             mFilteredPrograms.addAll(DatabaseHelper.getInstance(mContext).getProgramsForDay(day));
         } else {
             mFilteredPrograms.addAll(mPrograms);

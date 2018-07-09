@@ -83,14 +83,12 @@ public class SettingsFragment extends Fragment {
         // Display stored language
         String lang = Utils.getLanguageTTS(mContext);
         String[] languages = getResources().getStringArray(R.array.languages);
-        for (int i = 0; i > languages.length; i++) {
+        for (int i = 0; i < languages.length; i++) {
             if (languages[i].equals(lang)) {
                 mLangSpinner.setSelection(i);
                 break;
             }
         }
-
-
 
         mLangSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

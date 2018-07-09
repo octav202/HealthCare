@@ -108,13 +108,10 @@ public class PlayBarFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
+        Log.d(TAG, "onCreateView()");
+
         mVisible = true;
         mContext = getActivity().getApplicationContext();
-
-        mContext.startService(new Intent(mContext, PlayService.class));
-
-        mContext.bindService(new Intent(mContext, PlayService.class),
-                mConnection, Context.BIND_AUTO_CREATE);
 
         View view = inflater.inflate(R.layout.playbar_fragment, container, false);
 
@@ -166,9 +163,25 @@ public class PlayBarFragment extends Fragment{
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart()");
-        if(mService != null) {
+
+        mContext.bindService(new Intent(mContext, PlayService.class),
+                mConnection, Context.BIND_AUTO_CREATE);
+
+        if (mService != null) {
             mProgram = mService.getProgram();
             setupViewForProgram();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop()");
+
+        try {
+            mContext.unbindService(mConnection);
+        } catch (IllegalArgumentException e) {
+
         }
     }
 
@@ -181,11 +194,6 @@ public class PlayBarFragment extends Fragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try {
-            mContext.unbindService(mConnection);
-        } catch (IllegalArgumentException e) {
-
-        }
     }
 
     /**
@@ -194,20 +202,21 @@ public class PlayBarFragment extends Fragment{
      * @param program
      */
     public void setProgram(Program program) {
+
         if (mService != null) {
             mService.setProgram(program);
         }
-        mProgram = program;
-        setupViewForProgram();
 
-    }
-
-    public void stopProgram() {
-        Log.d(TAG, "stopProgram()");
-        if (mService != null) {
-            mService.stopProgram();
+        if (program != null) {
+            // Start Service when program is started
+            mContext.startService(new Intent(mContext, PlayService.class));
+        } else {
+            // Stop Service when program is stopped
+            mContext.stopService(new Intent(mContext, PlayService.class));
         }
 
+        mProgram = program;
+        setupViewForProgram();
     }
 
     public Program getProgram() {

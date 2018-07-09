@@ -124,6 +124,8 @@ public class PlayService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy()");
+
         if (textToSpeech != null) {
             textToSpeech.stop();
         }
