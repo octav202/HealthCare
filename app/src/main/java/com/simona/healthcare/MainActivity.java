@@ -28,7 +28,6 @@ import static com.simona.healthcare.utils.Constants.EXTRA_KEY;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY_EVENTS;
 import static com.simona.healthcare.utils.Constants.EXTRA_KEY_PROGRAMS;
 import static com.simona.healthcare.utils.Constants.GALLERY_INTENT;
-import static com.simona.healthcare.utils.Constants.TAG;
 import static com.simona.healthcare.utils.Constants.TYPE_EXERCISE;
 import static com.simona.healthcare.utils.Constants.TYPE_RECIPE;
 
@@ -101,8 +100,10 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
             } else {
-                loadFragment(ProgramsFragment.newInstance());
+                loadFragment(mCurrentFragment);
             }
+        } else {
+            loadFragment(mCurrentFragment);
         }
     }
 
@@ -188,6 +189,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void loadFragment(Fragment fragment) {
+        Log.d(TAG, "loadFragment() " + fragment.getClass().getSimpleName());
         invalidateOptionsMenu();
         mCurrentFragment = fragment;
         getFragmentManager().beginTransaction().replace(R.id.mainContent, fragment).commit();
