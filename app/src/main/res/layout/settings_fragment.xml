@@ -145,6 +145,35 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"/>
 
+    <!-- Frequence TTS-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="15dp"
+            android:text="@string/tts_frequence"
+            android:textSize="16dp"
+            android:textColor="@color/list_item_background"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/frequenceBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10" />
+
+    </LinearLayout>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
     <!-- Pitch TTS-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -160,17 +189,15 @@
             android:text="@string/pitch"
             android:textSize="16dp"
             android:textColor="@color/list_item_background"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:paddingRight="44dp"/>
 
         <SeekBar
+            android:id="@+id/pitchBar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:max="10"
-            android:id="@+id/pitchBar"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:max="10" />
 
-    <View android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+    </LinearLayout>
 
 </LinearLayout>

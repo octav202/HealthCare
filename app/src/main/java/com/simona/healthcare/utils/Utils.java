@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import java.util.Locale;
 
 import static com.simona.healthcare.utils.Constants.PREFS_BREAK_TTS_KEY;
+import static com.simona.healthcare.utils.Constants.PREFS_FREQUENCE_TTS_KEY;
 import static com.simona.healthcare.utils.Constants.PREFS_LANG_TTS_KEY;
 import static com.simona.healthcare.utils.Constants.PREFS_PITCH_TTS_KEY;
 import static com.simona.healthcare.utils.Constants.PREFS_PROGRAM_TTS_KEY;
@@ -104,6 +105,20 @@ public class Utils {
         }
 
         return locale;
+    }
+
+    // Frequence TTS
+    public static void setFrequenceTTS(Context context, float pitch) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putFloat(PREFS_FREQUENCE_TTS_KEY, pitch);
+        editor.apply();
+    }
+
+    public static float getFrequenceTTS(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        float frequence = preferences.getFloat(PREFS_FREQUENCE_TTS_KEY, 0.9f);
+        return frequence;
     }
 
     // Pitch TTS

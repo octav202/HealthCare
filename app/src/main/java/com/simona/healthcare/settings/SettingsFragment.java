@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class SettingsFragment extends Fragment {
     private Switch mRepsSwitch;
     private Switch mBreakSwitch;
     private Spinner mLangSpinner;
+    private SeekBar mFrequenceBar;
     private SeekBar mPitchBar;
 
     public static SettingsFragment newInstance() {
@@ -50,6 +52,7 @@ public class SettingsFragment extends Fragment {
         mBreakSwitch.setChecked(Utils.getBreakTTS(mContext));
 
         mLangSpinner = view.findViewById(R.id.langSpinner);
+        mFrequenceBar = view.findViewById(R.id.frequenceBar);
         mPitchBar = view.findViewById(R.id.pitchBar);
 
         mProgramSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -108,17 +111,45 @@ public class SettingsFragment extends Fragment {
             }
         });
 
+        // Frequence
+        int frequence = Math.round(Utils.getFrequenceTTS(mContext));
+        mFrequenceBar.setProgress(frequence);
+        mFrequenceBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    // Store Frequence
+                    Utils.setFrequenceTTS(mContext, progress);
+
+                    // Apply Frequence
+                    PlayBarFragment.getInstance().setFrequence(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         // Pitch Bar
-        int pitch = Math.round(Utils.getPitchTTS(mContext) * 10);
-        mPitchBar.setProgress(Integer.valueOf(pitch));
+        int pitch = Math.round(Utils.getPitchTTS(mContext));
+        mPitchBar.setProgress(pitch);
         mPitchBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // Store Pitch
-                Utils.setPitchTTS(mContext, progress);
+                if (fromUser) {
+                    // Store Pitch
+                    Utils.setPitchTTS(mContext, progress);
 
-                // Apply Pitch
-                PlayBarFragment.getInstance().setPitch(progress);
+                    // Apply Pitch
+                    PlayBarFragment.getInstance().setPitch(progress);
+                }
             }
 
             @Override

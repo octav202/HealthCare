@@ -331,6 +331,12 @@ public class PlayBarFragment extends Fragment{
         }
     }
 
+    public void setFrequence(float frequence) {
+        if (mService != null) {
+            mService.setFrequence(frequence);
+        }
+    }
+
     public void setPitch(float pitch) {
         if (mService != null) {
             mService.setPitch(pitch);

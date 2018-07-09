@@ -14,6 +14,7 @@ public class Constants {
     public static final String PREFS_REPS_TTS_KEY = "reps_tts";
     public static final String PREFS_BREAK_TTS_KEY = "break_tts";
     public static final String PREFS_LANG_TTS_KEY = "lang_tts";
+    public static final String PREFS_FREQUENCE_TTS_KEY = "frequence_tts";
     public static final String PREFS_PITCH_TTS_KEY = "pitch_tts";
 
     // PhotoPicker

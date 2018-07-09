@@ -87,6 +87,10 @@ public class PlayService extends Service {
                     Locale locale = Utils.stringToLocale(lang);
                     textToSpeech.setLanguage(locale);
 
+                    // Get frequence
+                    float frequence = Utils.getFrequenceTTS(mContext);
+                    textToSpeech.setSpeechRate(frequence/10);
+
                     // Get pitch
                     float pitch = Utils.getPitchTTS(mContext);
                     textToSpeech.setPitch(pitch/10);
@@ -466,6 +470,16 @@ public class PlayService extends Service {
     public void setLanguage(Locale locale) {
         Log.d(TAG, "setLanguage() " + locale);
         textToSpeech.setLanguage(locale);
+    }
+
+    /**
+     * Stored frequence has value range 1-10
+     * Must be converted to 0.1f - 1.f
+     * @param frequence
+     */
+    public void setFrequence(float frequence) {
+        Log.d(TAG, "setFrequence() " + frequence/10);
+        textToSpeech.setSpeechRate(frequence/10);
     }
 
     /**

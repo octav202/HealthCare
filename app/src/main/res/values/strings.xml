@@ -39,7 +39,8 @@
     <string name="start_tts">Start</string>
     <string name="stop_tts">Stop</string>
     <string name="language">Limba</string>
-    <string name="pitch">Frecventa voce</string>
+    <string name="tts_frequence">Frecventa</string>
+    <string name="pitch">Ton</string>
 
     <!-- Settings -->
     <string name="workout">Workout</string>

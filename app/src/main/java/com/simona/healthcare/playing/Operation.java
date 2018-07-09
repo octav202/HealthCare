@@ -31,7 +31,7 @@ public class Operation {
     public static final int TYPE_BREAK_UNIT = 108;
 
     // Operation Durations
-    public static final int ONE_SEC = 1000;
+    public static final int ONE_SEC = 1300;
     public static final int TWO_SEC = 2000;
     public static final int THREE_SEC = 3000;
     public static final int FOUR_SEC = 4000;
