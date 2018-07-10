@@ -391,17 +391,17 @@ public class PlayService extends Service {
         // Handle Button States
         switch (mState.get()) {
             case STATE_PAUSED:
-                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_play);
+                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_play_widget);
                 remoteViews.setViewVisibility(R.id.noProgramLayout, View.GONE);
                 remoteViews.setViewVisibility(R.id.currentProgramLayout, View.VISIBLE);
                 break;
             case STATE_STOPPED:
-                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_play);
+                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_play_widget);
                 remoteViews.setViewVisibility(R.id.noProgramLayout, View.VISIBLE);
                 remoteViews.setViewVisibility(R.id.currentProgramLayout, View.GONE);
                 break;
             case STATE_PLAYING:
-                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_pause);
+                remoteViews.setImageViewResource(R.id.playButton,R.drawable.ic_pause_widget);
                 remoteViews.setViewVisibility(R.id.noProgramLayout, View.GONE);
                 remoteViews.setViewVisibility(R.id.currentProgramLayout, View.VISIBLE);
                 break;

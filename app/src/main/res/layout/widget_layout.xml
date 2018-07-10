@@ -1,119 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_background"
-    android:id="@+id/root_layout">
+    android:background="@drawable/widget_background">
 
     <RelativeLayout
+        android:id="@+id/currentProgramLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/currentProgramLayout"
-        android:visibility="gone">
+        android:paddingRight="10dp"
+        android:visibility="invisible">
 
-        <!-- Program -->
-        <TextView
-            android:id="@+id/programText"
+        <!-- Left Panel -->
+        <RelativeLayout
+            android:id="@+id/leftPanel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="8dp"
-            android:textSize="17dp"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:text="Program"
-            android:shadowColor="@android:color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="2"/>
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="50dp">
 
-        <!-- Exercise -->
-        <TextView
-            android:id="@+id/exerciseText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/programText"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="4dp"
-            android:textSize="17dp"
-            android:textStyle="bold"
-            android:text="Exercise"
-            android:textColor="@android:color/white"
-            android:shadowColor="@android:color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="2"/>
+            <!-- Program -->
+            <TextView
+                android:id="@+id/programText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="8dp"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="Program"
+                android:textColor="@color/widget_text"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:paddingEnd="20dp"/>
 
+            <!-- Current Rep/Break-->
+            <TextView
+                android:id="@+id/currentRep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="18dp"
+                android:layout_marginStart="15dp"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/break_text"
+                android:textColor="@color/play_bar_background"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
-        <!-- Set number-->
-        <TextView
-            android:id="@+id/setText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/exerciseText"
-            android:layout_alignParentStart="true"
-            android:textSize="17dp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="3dp"
-            android:text="Set 1/5"
-            android:shadowColor="@android:color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="2"/>
+        <!-- Right Panel -->
+        <RelativeLayout
+            android:id="@+id/rightPanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/leftPanel"
+            android:layout_alignParentEnd="true">
 
-        <!-- Current Rep/Break-->
-        <TextView
-            android:id="@+id/currentRep"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/break_text"
-            android:textSize="19dp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:layout_marginEnd="5dp"
-            android:shadowColor="@android:color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="2"/>
+            <!-- Exercise -->
+            <TextView
+                android:id="@+id/exerciseText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="Exercise"
+                android:textColor="@color/widget_text"
+                android:textSize="17dp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="4dp"
+                />
 
-        <LinearLayout
-            android:id="@+id/controlsLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:orientation="horizontal"
-            android:layout_marginEnd="0dp">
+            <!-- Set number-->
+            <TextView
+                android:id="@+id/setText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="Set 1/5"
+                android:textColor="@color/widget_text"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:layout_below="@+id/exerciseText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-3dp"
+                />
 
-            <ImageView
-                android:id="@+id/prevButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="7dp"
-                android:src="@drawable/ic_previous" />
+            <LinearLayout
+                android:id="@+id/controlsLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                >
 
-            <ImageView
-                android:id="@+id/playButton"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:src="@drawable/ic_play" />
+                <ImageView
+                    android:id="@+id/prevButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="7dp"
+                    android:src="@drawable/ic_previous_widget" />
 
-            <ImageView
-                android:id="@+id/nextButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="7dp"
-                android:src="@drawable/ic_next" />
+                <ImageView
+                    android:id="@+id/playButton"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_play_widget" />
 
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/nextButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="7dp"
+                    android:src="@drawable/ic_next_widget" />
+            </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
+
 
     <RelativeLayout
         android:id="@+id/noProgramLayout"
@@ -124,25 +146,30 @@
             android:id="@+id/noProgramText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:text="@string/no_program"
-            android:textColor="@android:color/white"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
             android:shadowColor="@android:color/black"
             android:shadowDx="1"
             android:shadowDy="1"
-            android:shadowRadius="2"/>
+            android:shadowRadius="2"
+            android:text="@string/no_program"
+            android:textColor="@color/widget_text"
+            android:textSize="17dp"
+            android:textStyle="bold" />
 
-        <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <Button
             android:id="@+id/selectProgramBtn"
-            android:text="@string/select_program"
-            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/noProgramText"
-            android:layout_marginTop="5dp"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/widget_button_background"
+            android:text="@string/select_program"
+            android:textColor="@color/play_bar_background"
+            android:textSize="15dp"
+            android:textStyle="bold"/>
     </RelativeLayout>
 
 </RelativeLayout>
